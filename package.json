@@ -1,0 +1,24 @@
+{
+  "name": "@aerial33/skills",
+  "version": "1.0.0",
+  "description": "Fork des Agent Skills JavaScript Mastery pour l'architecture agent-starter. /imprint et /remember sont agnostiques de la stack : chemins, dossiers et secrets lus dans CLAUDE.md et le manifeste de stack du projet.",
+  "keywords": [
+    "claude-code",
+    "cursor",
+    "ai-coding",
+    "skills",
+    "agent-skills",
+    "developer-tools",
+    "agent-starter"
+  ],
+  "homepage": "https://github.com/aerial33/skills",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aerial33/skills.git"
+  },
+  "license": "MIT",
+  "author": "aerial33",
+  "contributors": [
+    "JavaScript Mastery (original skills)"
+  ]
+}
