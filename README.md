@@ -30,6 +30,15 @@ pas les skills. Si une information manque, le skill le dit et demande — il n'i
 | `/imprint` | Après un composant UI | **Forké** — contrôle aux tokens, lit le manifeste |
 | `/remember` | Fin & début de session | **Forké** — frontière d'état, lit CLAUDE.md et le manifeste |
 
+### Skills de stack
+
+À la différence des skills de méthode, ceux-ci connaissent une stack. Le manifeste de stack du kit
+agent-starter (`context/stack/stack.md`) indique lesquels utiliser.
+
+| Skill | Stack | Quand | Statut |
+| ----- | ----- | ----- | ------ |
+| `nextjs-lint-setup` | Next.js 15+ (conventions Payload) | Initialiser ou mettre à jour ESLint + Prettier | Original aerial33 |
+
 `/architect`, `/review`, `/recover` restent d'origine : ils lisent « les fichiers de contexte » sans
 chemin précis, leur adaptation passe par le contenu du contexte (invariants, checklist).
 Détail des différences : [`FORK-NOTES.md`](FORK-NOTES.md).
@@ -43,7 +52,7 @@ Claude Code lit les skills dans `~/.claude/skills/<nom>/SKILL.md` (tous les proj
 modification soit prise en compte :
 
 ```bash
-for s in architect review recover imprint remember; do
+for s in architect review recover imprint remember nextjs-lint-setup; do
   ln -sfn ~/Codes/personal-projects/aerial33-skills/skills/$s ~/.claude/skills/$s
 done
 ```

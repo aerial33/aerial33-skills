@@ -1,0 +1,22 @@
+# Dépendances et builds
+**/node_modules
+**/.next
+**/build
+**/dist/**
+**/.git
+**/.yarn/**
+**/.pnp.*
+.tmp
+**/temp
+
+# Payload — code généré
+**/payload-types.ts
+**/payload-generated-schema.ts
+src/app/(payload)/admin/importMap.js
+src/migrations/
+
+# Divers
+**/docs/**
+tsconfig.json
+
+# Ajouter ici les dossiers propres au projet (ex. code de référence : _reference/)
