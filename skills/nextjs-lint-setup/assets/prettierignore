@@ -9,10 +9,10 @@
 .tmp
 **/temp
 
-# Payload — code généré
+# Payload — code généré (fichiers « DO NOT MODIFY », réécrits par Payload)
 **/payload-types.ts
 **/payload-generated-schema.ts
-src/app/(payload)/admin/importMap.js
+src/app/(payload)/
 src/migrations/
 
 # Divers

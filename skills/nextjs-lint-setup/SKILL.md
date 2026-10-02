@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 # nextjs-lint-setup
 
-> Skill **de stack** (Next.js, conventions Payload) du dépôt aerial33/skills — à la différence des
+> Skill **de stack** (Next.js, conventions Payload) du dépôt aerial33/aerial33-skills — à la différence des
 > skills de méthode, il connaît la stack. Il remplit la convention de lint de la stack `next-payload`
 > du kit agent-starter (`context/stack/stack.md`).
 
@@ -132,6 +132,10 @@ L'agent doit comprendre **pourquoi** la config est structurée ainsi, pour l'ada
 | `prettier` en avant-dernier | Désactive les règles de formatage ESLint en conflit avec Prettier |
 | `globalIgnores` en dernier | Exclut builds et code généré (types Payload, schéma, importMap, migrations) |
 
+**`.prettierignore` exclut tout `src/app/(payload)/`** : ces fichiers (layout, routes, pages admin) sont
+générés par Payload (« DO NOT MODIFY ») et réécrits lors des mises à jour. Les reformater crée des diffs
+parasites et fait échouer `format:check` après chaque régénération. ESLint peut continuer à les lire.
+
 **Pas de règles `@typescript-eslint/no-unsafe-*`** : elles exigent le lint typé (`parserOptions.projectService`).
 Sans lui, ESLint plante au chargement. Si on veut le lint typé un jour : activer `projectService` et
 utiliser la config `recommendedTypeChecked` de `typescript-eslint` — plus lent, à décider en connaissance de cause.
@@ -163,6 +167,7 @@ ce qui préserve la cascade CSS ; il est aussi mieux maintenu. Différences de c
 | -------- | -------- |
 | `You have used a rule which requires type information` | Une règle typée (ex. `no-unsafe-*`) est active sans `projectService` : la retirer ou activer le lint typé |
 | Erreurs sur `payload-types.ts`, `importMap.js` ou des migrations | Vérifier `globalIgnores` et `.prettierignore` |
+| `pnpm format` modifie des fichiers de `src/app/(payload)/` | Ajouter `src/app/(payload)/` à `.prettierignore`, puis `git checkout -- "src/app/(payload)"` |
 | Lint lent ou erreurs dans un dossier de référence | Ajouter le dossier aux exclusions ESLint, Prettier **et** `tsconfig.json` |
 | Conflits ESLint ↔ Prettier | `prettier` doit être placé avant `globalIgnores` dans `defineConfig` |
 | Imports non triés à l'enregistrement | Retirer `source.organizeImports` des réglages, redémarrer l'éditeur |

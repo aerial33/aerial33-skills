@@ -1,4 +1,4 @@
-# aerial33 / skills
+# aerial33-skills
 
 Fork des [Agent Skills JavaScript Mastery](https://github.com/JavaScript-Mastery-Pro/skills), adapté
 à l'architecture **agent-starter** (kit de contexte en 4 couches : méthode, stack, modules, projet).
@@ -63,7 +63,7 @@ done
 ### Une fois publié
 
 ```bash
-npx skills@latest add aerial33/skills
+npx skills@latest add aerial33/aerial33-skills
 ```
 
 ## Workflow
