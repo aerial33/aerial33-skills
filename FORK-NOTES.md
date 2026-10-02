@@ -1,7 +1,7 @@
 # Fork Notes
 
 `/imprint` et `/remember` sont des forks des skills JavaScript Mastery ; `/architect`, `/review`, `/recover` sont d'origine.
-`/design-system` (skill de méthode) et `nextjs-lint-setup` (skill de stack) sont des skills aerial33
+`/design-system` (skill de méthode), `nextjs-lint-setup` et `tailwind-v4` (skills de stack) sont des skills aerial33
 originaux, hors périmètre de ces notes.
 
 ## Historique

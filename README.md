@@ -40,6 +40,7 @@ agent-starter (`context/stack/stack.md`) indique lesquels utiliser.
 | Skill | Stack | Quand | Statut |
 | ----- | ----- | ----- | ------ |
 | `nextjs-lint-setup` | Next.js 15+ (conventions Payload) | Initialiser ou mettre à jour ESLint + Prettier | Original aerial33 |
+| `tailwind-v4` | Tailwind CSS v4 (CSS-first) | Écrire ou relire des classes / du CSS Tailwind sans habitudes v3 | Original aerial33 |
 
 `/architect`, `/review`, `/recover` restent d'origine : ils lisent « les fichiers de contexte » sans
 chemin précis, leur adaptation passe par le contenu du contexte (invariants, checklist).
@@ -54,7 +55,7 @@ Claude Code lit les skills dans `~/.claude/skills/<nom>/SKILL.md` (tous les proj
 modification soit prise en compte :
 
 ```bash
-for s in architect review recover design-system imprint remember nextjs-lint-setup; do
+for s in architect review recover design-system imprint remember nextjs-lint-setup tailwind-v4; do
   ln -sfn ~/Codes/personal-projects/aerial33-skills/skills/$s ~/.claude/skills/$s
 done
 ```
@@ -83,4 +84,4 @@ Reprise de session     → /remember restore
 ## Crédits & licence
 
 Travail original : **JavaScript Mastery** — https://github.com/JavaScript-Mastery-Pro/skills
-Modifications (`/imprint`, `/remember`) et skills originaux (`/design-system`, `nextjs-lint-setup`) : **aerial33**. Licence MIT (voir `LICENSE`).
+Modifications (`/imprint`, `/remember`) et skills originaux (`/design-system`, `nextjs-lint-setup`, `tailwind-v4`) : **aerial33**. Licence MIT (voir `LICENSE`).
