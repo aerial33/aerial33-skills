@@ -44,7 +44,11 @@ Ne jamais supposer un chemin. Résoudre, dans cet ordre :
    - § Design → format des tokens, chargement des polices, pack d'icônes, primitives, règles des
      composants externes ;
    - § Commande de vérification.
-3. **`context/build-plan.md`** → l'entrée F00 et ses critères « Terminé quand ».
+3. **`context/build-plan.md`** → l'entrée F00 et ses critères « Terminé quand ». Si aucune entrée ne
+   porte l'ID `F00`, chercher la feature **marquée « F00 » dans son titre** (projet commencé avant
+   l'adoption de F00, qui garde sa numérotation — ex. `F03 … (F00, variante provisoire)`) : c'est elle
+   qui fait foi, y compris pour la variante et les critères. Si aucune feature n'est marquée, demander
+   laquelle en tient lieu, ou proposer d'ajouter F00.
 4. **Manque une info** → dire laquelle et **demander**. Ne jamais inventer un chemin ni créer un
    fichier ailleurs que là où il est déclaré.
 
@@ -52,7 +56,7 @@ Puis déterminer **où on en est** :
 
 | Indice | Étape |
 | ------ | ----- |
-| `brief.md` absent ou vide, variante non choisie | demander : provisoire ou complète ? (lire la variante de F00 dans le build-plan d'abord) |
+| `brief.md` absent ou vide, variante non choisie | demander : provisoire ou complète ? (lire d'abord la variante dans l'entrée F00 du build-plan, ou la feature marquée F00) |
 | `brief.md` absent ou vide, variante complète | 1 — Brief |
 | brief « provisoire » | F00 provisoire faite → proposer la F00 complète, en partant des pages déjà construites |
 | brief « brouillon », tokens encore ceux du template | 2 — Extraction |
