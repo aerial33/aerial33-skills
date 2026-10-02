@@ -1,7 +1,8 @@
 # Fork Notes
 
 `/imprint` et `/remember` sont des forks des skills JavaScript Mastery ; `/architect`, `/review`, `/recover` sont d'origine.
-`nextjs-lint-setup` est un skill aerial33 original (skill de stack), hors périmètre de ces notes.
+`/design-system` (skill de méthode) et `nextjs-lint-setup` (skill de stack) sont des skills aerial33
+originaux, hors périmètre de ces notes.
 
 ## Historique
 
@@ -9,6 +10,7 @@
 | ------- | ---- | ---------- |
 | v0 | 2026-09 | Premier fork, spécifique Next.js + Payload + Tailwind, chemins et secrets écrits en dur (ancien kit agent-starter). |
 | v1 | 2026-10-01 | **Agnostique** : plus aucun chemin, dossier ni nom de secret en dur. Tout est lu dans `CLAUDE.md` et le manifeste de stack (`context/stack/stack.md`). Aligné sur le kit agent-starter en 4 couches (`context/state/`, `ui-tokens`/`ui-rules`, `build-plan`). |
+| v1.1 | 2026-10-02 | `/imprint` : la page témoin n'est jamais imprintée ; un composant externe déclaré dans `designs/brief.md` est noté comme tel. Ajout du skill original `/design-system` (variantes provisoire / complète de F00). |
 
 ## /imprint — différences avec l'original
 

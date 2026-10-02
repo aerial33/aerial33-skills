@@ -3,8 +3,9 @@
 Fork des [Agent Skills JavaScript Mastery](https://github.com/JavaScript-Mastery-Pro/skills), adapté
 à l'architecture **agent-starter** (kit de contexte en 4 couches : méthode, stack, modules, projet).
 
-Cinq slash-commands qui donnent à un agent IA la discipline d'ingénierie qu'il n'a pas par défaut :
-réflexion avant de coder, review structurée, récupération sur incident, cohérence UI, mémoire entre sessions.
+Six slash-commands qui donnent à un agent IA la discipline d'ingénierie qu'il n'a pas par défaut :
+réflexion avant de coder, review structurée, récupération sur incident, design system fixé avant la
+première page, cohérence UI, mémoire entre sessions.
 
 ## Principe : aucun chemin en dur
 
@@ -27,6 +28,7 @@ pas les skills. Si une information manque, le skill le dit et demande — il n'i
 | `/architect` | Avant toute feature complexe | Original JSM |
 | `/review` | Après chaque feature | Original JSM |
 | `/recover` | Quand quelque chose casse | Original JSM |
+| `/design-system` | Avant la première page (F00, provisoire ou complète), puis pour faire évoluer le système | **Original aerial33** — thème par défaut + layout, ou brief, tokens, page témoin, gel ; lit le manifeste |
 | `/imprint` | Après un composant UI | **Forké** — contrôle aux tokens, lit le manifeste |
 | `/remember` | Fin & début de session | **Forké** — frontière d'état, lit CLAUDE.md et le manifeste |
 
@@ -52,7 +54,7 @@ Claude Code lit les skills dans `~/.claude/skills/<nom>/SKILL.md` (tous les proj
 modification soit prise en compte :
 
 ```bash
-for s in architect review recover imprint remember nextjs-lint-setup; do
+for s in architect review recover design-system imprint remember nextjs-lint-setup; do
   ln -sfn ~/Codes/personal-projects/aerial33-skills/skills/$s ~/.claude/skills/$s
 done
 ```
@@ -69,6 +71,7 @@ npx skills@latest add aerial33/aerial33-skills
 ## Workflow
 
 ```
+Début de l'interface   → /design-system neutral (F00 provisoire) ou /design-system (F00 complète)
 Feature complexe       → /architect → (valider le plan) → implémenter
 Après la feature       → /review
 Après un composant UI  → /imprint
@@ -80,4 +83,4 @@ Reprise de session     → /remember restore
 ## Crédits & licence
 
 Travail original : **JavaScript Mastery** — https://github.com/JavaScript-Mastery-Pro/skills
-Modifications (`/imprint`, `/remember`) : **aerial33**. Licence MIT (voir `LICENSE`).
+Modifications (`/imprint`, `/remember`) et skills originaux (`/design-system`, `nextjs-lint-setup`) : **aerial33**. Licence MIT (voir `LICENSE`).

@@ -42,7 +42,8 @@ Never assume paths. Resolve them, in this order:
 2. **Stack manifest** — `context/stack/stack.md` (or the manifest `CLAUDE.md` points to):
    - **component folders to imprint**;
    - **folders to exclude** (generated code, component-library primitives);
-   - the **token source file** (e.g. a CSS file with a `@theme` block) — the single source of values;
+   - the **token source file** (e.g. a CSS file with theme variables exposed through `@theme`) — the
+     single source of values, organised as the manifest describes;
    - the component library in use, if any.
 3. **Fallback** — if `CLAUDE.md` or the manifest is missing, or a value is not declared: say which one
    is missing and **ask the developer**. Do not guess a folder, and never create the registry anywhere
@@ -57,13 +58,16 @@ State the resolved values in one line before continuing, e.g.
 
 Read the token source file and the UI files resolved in Step 0. Build the canonical reference:
 
-- the color tokens — the ONLY allowed colors;
+- the color tokens (roles) — the default for every color;
+- the **declared palette exceptions** in the visual rules (e.g. an "Exceptions palette" section):
+  framework palette classes allowed for listed cases only (charts, categories, overlays…);
 - the border-radius scale;
 - the typography variables;
 - the spacing conventions and the visual rules (including the project's "do nots").
 
-A component that uses a raw hex value or a color class not backed by a token is a **violation to
-flag**, not a pattern to record.
+A component that uses a raw hex or arbitrary value is a **violation to flag**, not a pattern to record.
+A palette class outside the declared exceptions is a **warning** to surface (it should become a role,
+a token, or a declared exception).
 
 ---
 
@@ -72,8 +76,11 @@ flag**, not a pattern to record.
 If a filepath was provided — read that file.
 
 Otherwise, identify the most recently created or modified files **inside the component folders
-declared in the manifest**. Skip everything in the **excluded folders**. When a custom component wraps
-a primitive of the component library, do not imprint the primitive — note which one it wraps.
+declared in the manifest**. Skip everything in the **excluded folders**, and never imprint the
+**styleguide / page témoin** declared in the manifest (it showcases the tokens, it is not a component).
+When a custom component wraps a primitive of the component library, do not imprint the primitive —
+note which one it wraps. When a component comes from an external source declared in the project's
+design brief (`designs/brief.md`), note that source in the entry's **Type**.
 
 If it is unclear which files to capture from, ask:
 
@@ -94,7 +101,8 @@ enforced pattern), responsive variants (capture the base only).
 
 For each extracted value, check conformance:
 
-- color backed by a token? ✅ — raw hex / non-token class? ⚠️ flag it;
+- color backed by a token? ✅ — palette class within a declared exception? ✅ (note "exception") —
+  palette class outside the exceptions? ⚠️ warning — raw hex / arbitrary value? ⚠️ violation;
 - radius on the defined scale? ✅ — off-scale value? ⚠️ flag it;
 - spacing matches the convention? ✅ — outlier? ⚠️ note it.
 
@@ -111,12 +119,12 @@ update the existing entry if this component type is already registered. Never du
 ### [Component Name]
 
 File: [filepath]
-Type: [component | content block | wraps <library>:<primitive>]
+Type: [component | content block | wraps <library>:<primitive> | external:<source>]
 Last updated: [date]
 
 | Property         | Class           | Token-compliant? |
 | ---------------- | --------------- | ---------------- |
-| Background       | [class]         | yes / ⚠️ no       |
+| Background       | [class]         | yes / exception / ⚠️ no |
 | Border           | [class]         | yes / ⚠️ no       |
 | Border radius    | [class]         | yes / ⚠️ no       |
 | Text — primary   | [class]         | yes / ⚠️ no       |
@@ -170,7 +178,10 @@ folders, applying the exclusions.
 **Interactive states** — [variants] → [standard]
 
 ### Token violations (must fix)
-[Every raw hex / non-token class, with file and line]
+[Every raw hex / arbitrary value, with file and line]
+
+### Palette warnings (decide)
+[Every palette class outside the declared exceptions, with file and line → role, new token, or new exception]
 
 ### Recommended baseline
 [The correct pattern per property — based on the tokens and what the majority already uses correctly]
