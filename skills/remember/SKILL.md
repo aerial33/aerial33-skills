@@ -1,11 +1,12 @@
 ---
 name: remember
-description: Save what matters at the end of a session so the next session picks up exactly where you left off, or restore context at the start of a new session. Routes durable decisions to the progress tracker and session handoff to the memory file, reads the project's own reading list on restore, and never persists secrets. File paths, reading order and secret names come from the project's CLAUDE.md and stack manifest, never hardcoded.
+description: Save what matters at the end of a session so the next session picks up exactly where you left off, or restore context at the start of a new session. Routes durable decisions to the progress tracker and session handoff to the memory file, points to the active /architect plan instead of re-describing it, reads the project's own reading list on restore, and never persists secrets. File paths, reading order and secret names come from the project's CLAUDE.md and stack manifest, never hardcoded.
 ---
 
 > FORK aerial33 du skill JavaScript Mastery. Différences vs original : frontière explicite entre
 > état durable (progress tracker) et handoff de session (memory) ; restore suit la liste de lecture
-> déclarée par le projet ; secrets déclarés par la stack redactés ; état du gate noté. **Aucun chemin
+> déclarée par le projet ; secrets déclarés par la stack redactés ; état du gate noté ; le handoff
+> renvoie au plan actif de `/architect` (étape `F05.3`) au lieu de le redécrire. **Aucun chemin
 > en dur** — tout est lu dans `CLAUDE.md` et le manifeste de stack (architecture agent-starter).
 > Voir FORK-NOTES.md.
 
@@ -32,7 +33,8 @@ Never assume paths. Resolve them, in this order:
    - **reading list** (§1) — what to read *always* and *per task*;
    - **state boundaries** table (§4) — exact paths of the **progress tracker**, the **memory file**
      and the **UI registry** (in agent-starter: `context/state/progress-tracker.md`,
-     `context/state/memory.md`, `context/state/ui-registry.md`).
+     `context/state/memory.md`, `context/state/ui-registry.md`), and the **plans folder**
+     (in agent-starter: `context/plans/`).
 2. **Stack manifest** — `context/stack/stack.md` (or the manifest `CLAUDE.md` points to):
    - the **secret names** to redact;
    - the **verification (gate) command**.
@@ -64,6 +66,8 @@ Route information by lifecycle. Do not dump everything into the memory file:
 - **Memory file** = SESSION handoff: just enough to resume tomorrow without re-explaining.
   Overwritten each save.
 - **UI registry** = de-facto design system. Owned by `/imprint`, not by this skill.
+- **Plan** = the validated `/architect` plan of a feature. Owned by `/architect`; this skill only checks
+  its ticks and deviations are up to date, and **points** to it — never copies its steps.
 
 ---
 
@@ -81,6 +85,15 @@ If this session produced completed units or durable decisions:
 
 Do not duplicate these into the memory file — reference them.
 
+### Step 1b — Check the active plan
+
+If the current feature has a plan in the plans folder with status `en cours`:
+
+- every step that was **verified** this session is ticked — never tick an unverified step;
+- every deviation from the plan has its dated line in **Écarts au plan** — never rewrite the plan itself.
+
+If something is missing, fix it or tell the developer before writing the handoff.
+
 ### Step 2 — Write the session handoff to the memory file
 
 Think like handing off to an equally-skilled colleague who knows nothing about today.
@@ -92,7 +105,9 @@ Think like handing off to an equally-skilled colleague who knows nothing about t
 - **Problems solved** — so they are not solved twice.
 - **Current state** — what works, what is partial, what is broken.
 - **Gate status** — did the verification command from the stack manifest pass at save time? Which step failed?
-- **Next session starts with** — the very next action, referencing the build-plan ID.
+- **Active plan** — path, status, last ticked step; or "none".
+- **Next session starts with** — the very next action, referencing the build-plan ID, and the **plan step**
+  if there is one (e.g. "F05.3 — see the plan"). Do not restate what the plan already says.
 - **Open questions** — or a pointer to the progress tracker.
 
 Do not capture: implementation details visible in the code, decisions already in the tracker or context
@@ -125,6 +140,7 @@ Last updated: [date and time]
 ## Problems solved
 ## Current state
 ## Gate status
+## Active plan
 ## Next session starts with
 ## Open questions
 ```
@@ -147,6 +163,8 @@ Next session: run /remember restore.
 3. The **memory file**. If it is absent or empty, say so: first session or not saved.
 4. The **per-task** files for the action named in "Next session starts with" (e.g. its build-plan
    entry, and the UI files if it is UI work).
+5. The **active plan** named in the memory file, or the plan of the next feature if one exists in the
+   plans folder. Check its ticks against the memory file; report any mismatch, do not fix it silently.
 
 If `CLAUDE.md` has no reading list, say so, read every markdown file under `context/` except the state
 files and design images, and recommend adding a reading list.
@@ -162,6 +180,7 @@ Memory restored. Here is where we are:
 **Last session:** [what was built]
 **Current state:** [what works] · Gate at last save: [pass/fail]
 **Progress:** [phase · last completed ID · next ID]
+**Plan:** [path · status · next step ID] or none
 **Decisions in place:** [key durable decisions from the tracker]
 **Next up:** [the next action]
 

@@ -1,6 +1,6 @@
 {
   "name": "@aerial33/aerial33-skills",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Fork des Agent Skills JavaScript Mastery pour l'architecture agent-starter, plus des skills originaux (/design-system, nextjs-lint-setup, tailwind-v4). Les skills de méthode sont agnostiques de la stack : chemins, dossiers et secrets lus dans CLAUDE.md et le manifeste de stack du projet.",
   "keywords": [
     "claude-code",

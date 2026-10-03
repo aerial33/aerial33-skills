@@ -1,7 +1,11 @@
 ---
 name: review
-description: After building a feature, verify it matches what was planned, respects the system architecture and design standards, and is ready for production. Reports issues clearly so the developer decides what to fix.
+description: After building a feature, verify it matches what was planned, respects the system architecture and design standards, and is ready for production. Reads the persisted /architect plan (steps, deviations) or the build-plan entry as the benchmark. Reports issues clearly so the developer decides what to fix.
 ---
+
+> FORK aerial33 du skill JavaScript Mastery. Différence vs original : le référentiel de la couche 1 est le
+> **plan persisté** par `/architect` (étapes cochées, écarts consignés), à défaut l'entrée du build-plan ;
+> chemins lus dans `CLAUDE.md`, jamais en dur. Voir FORK-NOTES.md.
 
 Building is not done when the code runs. It is done when the code is correct.
 
@@ -19,13 +23,20 @@ It does not fix anything. It reports what it finds and lets the developer decide
 
 Before reviewing anything, establish the benchmark.
 
+Resolve paths first — never assume them: the **plans folder** comes from the state boundaries table of
+`CLAUDE.md` (§4), the **build plan** and the context files from its reading list (§1).
+
 Read in this order:
 
-- The implementation plan from `/architect` if one exists
+- The **plan** of the feature in the plans folder (`<ID>-*.md`; if several, the one not marked
+  `remplacé`). Its **Écarts au plan** are part of the benchmark: a recorded deviation is planned work.
+- The feature's **build-plan entry** (its "done when" criterion)
 - The feature description or task that was given
 - Any relevant context files — architecture boundaries, code standards, design rules
 
-If no plan exists, ask the developer to describe what the feature was supposed to do before reviewing. You cannot verify correctness without knowing what correct looks like.
+No plan file is normal for a feature that did not go through `/architect`: the build-plan entry is then
+the benchmark. If neither exists, ask the developer to describe what the feature was supposed to do
+before reviewing. You cannot verify correctness without knowing what correct looks like.
 
 ---
 
@@ -40,6 +51,14 @@ Check:
 - Every part of the feature description — is it all there?
 - The decisions made during planning — are they reflected in the code?
 - The scope — did the implementation stay within bounds or add things that were not asked for?
+
+If a plan file exists, also check:
+
+- **Steps** — every step ticked? For each one, does its written verification still hold?
+- **Deviations** — every difference between the code and the plan is covered by a line in
+  **Écarts au plan**. An unrecorded difference is **undeclared drift**.
+- **Decisions** — a deviation that changes a decision carries the developer's agreement.
+- **Out of scope** — nothing listed under **Hors périmètre** was built.
 
 Flag anything that was planned but missing. Flag anything that was built but not planned.
 
@@ -73,8 +92,9 @@ After completing all three layers, produce a clear report. Do not bury issues. D
 ## Review — [Feature Name]
 
 ### Layer 1 — Plan alignment
+Benchmark: [plan path · status] or [build-plan entry]
 [PASS / ISSUES FOUND]
-[List any gaps between what was planned and what was built]
+[List any gaps between what was planned and what was built, unticked steps, undeclared drift]
 
 ### Layer 2 — System integrity
 [PASS / ISSUES FOUND]
@@ -105,6 +125,9 @@ Wait for the developer to:
 
 The developer owns the quality decision. You inform it.
 
+This skill never edits the plan. Once the developer confirms the review is settled and the gate has
+passed, the plan's status can move to `terminé` — as part of building, not of reviewing.
+
 ---
 
 ## Severity Guide
@@ -116,12 +139,14 @@ Not all issues are equal. Use this to help the developer prioritise:
 - Architecture boundary violations that will break future features
 - Missing error handling that causes silent failures
 - Functionality that was planned but completely missing
+- Undeclared drift that changes a decision of the plan
 
 **Important — fix soon**
 
 - Design system drift that will cause UI inconsistency
 - Code standard violations that will compound across the codebase
 - Edge cases that a real user will encounter
+- Undeclared drift from the plan (code differs, no line in **Écarts au plan**)
 
 **Minor — fix when convenient**
 
