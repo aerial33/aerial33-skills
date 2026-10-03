@@ -120,6 +120,18 @@ If a step fails one of these, split it. Order: UI with mock data first, then log
 workflow rules say otherwise. Steps say *what* changes and *where*; code belongs in the codebase, not in
 the plan.
 
+### Parts and milestones
+
+Beyond about 6 steps, or when the feature crosses several layers (admin, front end, background jobs…),
+group the steps into **parts** (A, B, C…). Each part ends with a **milestone** (jalon): a state that can
+be tested end to end, written with its own verification.
+
+- Step numbering stays continuous across parts (`F07.1` … `F07.7`).
+- A part has no status of its own: it is done when its steps and its milestone are ticked.
+- If a part could ship on its own, the build-plan entry is too big: say so and propose splitting it into
+  separate features in the build plan instead of planning parts.
+- Under about 6 steps, keep the flat list — parts would only add ceremony.
+
 ### Format
 
 ```markdown
@@ -169,6 +181,40 @@ the plan.
 (aucun)
 ```
 
+With parts, the **Étapes** section becomes:
+
+```markdown
+## Étapes
+
+### Partie A — [What exists at the end of this part]
+
+**Jalon :** [end-to-end check that proves part A works]
+
+#### [ID].1 — [Step title]
+
+- **Frontière :** …
+- **Fichiers :** …
+- **Fait :** …
+- **Vérification :** …
+- [ ] faite
+
+#### [ID].2 — [Step title]
+
+[...]
+
+- [ ] **Jalon A vérifié**
+
+### Partie B — [...]
+
+**Jalon :** [...]
+
+#### [ID].3 — [Step title]
+
+[...]
+
+- [ ] **Jalon B vérifié**
+```
+
 Never write a secret in a plan (env var **names** only).
 
 ## Step 6 — Validate
@@ -191,6 +237,8 @@ The validated plan is **frozen**. While building:
 
 - set the status to `en cours` when the first step starts;
 - tick a step **only after its verification passed**;
+- with parts: tick the milestone only after its end-to-end check passed, then run `/review jalon` on that
+  part before starting the next one. A milestone is the natural place to end a session (`/remember save`);
 - never rewrite a step, a decision or the scope. Any deviation (step added, split or dropped, other file,
   other approach) gets a dated line in **Écarts au plan**: `[date] — [step] — [change] — [why]`;
 - a deviation that challenges a **decision**: stop and ask before continuing; note the agreement in the line;

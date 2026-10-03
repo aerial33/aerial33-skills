@@ -10,6 +10,7 @@ originaux, hors périmètre de ces notes.
 | ------- | ---- | ---------- |
 | v0 | 2026-09 | Premier fork, spécifique Next.js + Payload + Tailwind, chemins et secrets écrits en dur (ancien kit agent-starter). |
 | v1 | 2026-10-01 | **Agnostique** : plus aucun chemin, dossier ni nom de secret en dur. Tout est lu dans `CLAUDE.md` et le manifeste de stack (`context/stack/stack.md`). Aligné sur le kit agent-starter en 4 couches (`context/state/`, `ui-tokens`/`ui-rules`, `build-plan`). |
+| v1.4 | 2026-10-03 | **Parties et jalons** : `/architect` regroupe les étapes en parties au-delà d'environ 6 étapes ; `/review jalon` (couches 1–2 sur une partie) ; `/remember` note la partie courante. |
 | v1.3 | 2026-10-03 | **Plans persistés** : `/architect` forké (plan écrit dans le dossier de plans de `CLAUDE.md` §4, brouillon → validé, étapes atomiques `F05.1`…, écarts consignés) ; `/review` forké (référentiel = plan persisté ou entrée du build-plan) ; `/remember` renvoie au plan actif. |
 | v1.1 | 2026-10-02 | `/imprint` : la page témoin n'est jamais imprintée ; un composant externe déclaré dans `designs/brief.md` est noté comme tel. Ajout du skill original `/design-system` (variantes provisoire / complète de F00). |
 
@@ -20,6 +21,7 @@ originaux, hors périmètre de ces notes.
 | **Step 0 — résolution du layout** : dossier de plans (`CLAUDE.md` §4), build-plan, glossaire, commande de vérification | Le plan a un domicile déclaré ; pas de chemin en dur. |
 | Plan **écrit dans un fichier** `<ID>-<slug>.md`, statut **brouillon** puis **validé** après confirmation explicite | L'original laissait le plan dans la conversation : perdu à la coupure de session, introuvable pour `/review`. Le brouillon survit à une session coupée avant validation. |
 | **Étapes atomiques** `<ID>.<n>` : une frontière, une vérification, commande de vérification au vert | Implémentation pas à pas, reprise possible à une étape précise. |
+| **Parties et jalons** au-delà d'environ 6 étapes ; partie livrable seule → feature distincte | Revue et coupure de session à des points testables ; détecte une entrée de build-plan trop grosse. |
 | Sections **Hors périmètre** et **Écarts au plan** | `/review` distingue l'écart déclaré de la dérive. |
 | Plan validé **figé** ; écart sur une décision → arrêt et accord ; nouveau plan = `-v2` + ancien « remplacé » | La trace de ce qui était prévu reste lisible. |
 | Termes alignés reportés au glossaire | Le vocabulaire ne vit pas que dans un plan. |
@@ -30,6 +32,7 @@ originaux, hors périmètre de ces notes.
 | ---------- | -------- |
 | Référentiel de la couche 1 : **plan persisté** (étapes, écarts, hors périmètre), à défaut l'**entrée du build-plan** | Une feature sans `/architect` a quand même un critère ; on ne demande au développeur qu'en dernier recours. |
 | Dérive non déclarée = sévérité *Important* (*Critical* si elle touche une décision) | La règle « plan figé + écarts » devient vérifiable. |
+| Mode **`/review jalon`** : couches 1 et 2 sur une partie et son jalon | Corriger une dérive après 3 étapes plutôt qu'à la fin ; la couche 3 reste globale. |
 | Ne modifie jamais le plan | La review informe, elle ne corrige pas. |
 
 ## /imprint — différences avec l'original

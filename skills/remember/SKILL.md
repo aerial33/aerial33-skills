@@ -89,7 +89,8 @@ Do not duplicate these into the memory file — reference them.
 
 If the current feature has a plan in the plans folder with status `en cours`:
 
-- every step that was **verified** this session is ticked — never tick an unverified step;
+- every step that was **verified** this session is ticked — never tick an unverified step; same for a
+  milestone (jalon) and its end-to-end check;
 - every deviation from the plan has its dated line in **Écarts au plan** — never rewrite the plan itself.
 
 If something is missing, fix it or tell the developer before writing the handoff.
@@ -105,9 +106,9 @@ Think like handing off to an equally-skilled colleague who knows nothing about t
 - **Problems solved** — so they are not solved twice.
 - **Current state** — what works, what is partial, what is broken.
 - **Gate status** — did the verification command from the stack manifest pass at save time? Which step failed?
-- **Active plan** — path, status, last ticked step; or "none".
+- **Active plan** — path, status, current part (if the plan has parts), last ticked step; or "none".
 - **Next session starts with** — the very next action, referencing the build-plan ID, and the **plan step**
-  if there is one (e.g. "F05.3 — see the plan"). Do not restate what the plan already says.
+  if there is one (e.g. "F07.5, part B — see the plan"). Do not restate what the plan already says.
 - **Open questions** — or a pointer to the progress tracker.
 
 Do not capture: implementation details visible in the code, decisions already in the tracker or context
@@ -180,7 +181,7 @@ Memory restored. Here is where we are:
 **Last session:** [what was built]
 **Current state:** [what works] · Gate at last save: [pass/fail]
 **Progress:** [phase · last completed ID · next ID]
-**Plan:** [path · status · next step ID] or none
+**Plan:** [path · status · current part · next step ID] or none
 **Decisions in place:** [key durable decisions from the tracker]
 **Next up:** [the next action]
 

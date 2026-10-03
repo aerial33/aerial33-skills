@@ -13,6 +13,18 @@ AI moves fast. Fast means things get built that work on the surface but drift fr
 
 Run this after every feature. Before you move on.
 
+## How to Invoke
+
+```
+/review              # full review, after the feature — all three layers
+/review jalon [A]    # milestone review, when a plan part is done — layers 1 and 2, that part only
+```
+
+A **milestone review** (`jalon`) applies only to plans split into parts. Scope it to the steps of that
+part and its milestone: Layer 1 (plan alignment, milestone check included) and Layer 2 (system
+integrity). Skip Layer 3 — production readiness is checked once, on the whole feature. Without a part
+letter, take the last part whose milestone is ticked. Without parts in the plan, say so and run a full review.
+
 ## What This Skill Does Not Do
 
 It does not fix anything. It reports what it finds and lets the developer decide what matters and what to do about it. Fixing without understanding is how problems get buried, not solved.
@@ -55,6 +67,7 @@ Check:
 If a plan file exists, also check:
 
 - **Steps** — every step ticked? For each one, does its written verification still hold?
+- **Milestones** — for each part in scope, is the milestone ticked and does its end-to-end check hold?
 - **Deviations** — every difference between the code and the plan is covered by a line in
   **Écarts au plan**. An unrecorded difference is **undeclared drift**.
 - **Decisions** — a deviation that changes a decision carries the developer's agreement.
@@ -92,7 +105,7 @@ After completing all three layers, produce a clear report. Do not bury issues. D
 ## Review — [Feature Name]
 
 ### Layer 1 — Plan alignment
-Benchmark: [plan path · status] or [build-plan entry]
+Benchmark: [plan path · status · part reviewed, if milestone review] or [build-plan entry]
 [PASS / ISSUES FOUND]
 [List any gaps between what was planned and what was built, unticked steps, undeclared drift]
 
