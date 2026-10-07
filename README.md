@@ -26,7 +26,7 @@ pas les skills. Si une information manque, le skill le dit et demande — il n'i
 | Skill | Quand | Statut |
 | ----- | ----- | ------ |
 | `/architect` | Avant toute feature complexe | **Forké** — plan persisté (brouillon → validé), étapes atomiques regroupées en parties/jalons si besoin, écarts consignés |
-| `/review` | Après chaque feature (`/review jalon` à chaque jalon) | **Forké** — compare au plan persisté ou à l'entrée du build-plan |
+| `/review` | Après chaque feature (`/review jalon` à chaque jalon) | **Forké** — compare au plan persisté ou à l'entrée du build-plan, termine par le tag git à poser |
 | `/recover` | Quand quelque chose casse | Original JSM |
 | `/design-system` | Avant la première page (F00, provisoire ou complète), puis pour faire évoluer le système | **Original aerial33** — thème par défaut + layout, ou brief, tokens, page témoin, gel ; lit le manifeste |
 | `/imprint` | Après un composant UI | **Forké** — contrôle aux tokens, lit le manifeste |
@@ -74,8 +74,8 @@ npx skills@latest add aerial33/aerial33-skills
 ```
 Début de l'interface   → /design-system neutral (F00 provisoire) ou /design-system (F00 complète)
 Feature complexe       → /architect → plan brouillon → (valider) → implémenter étape par étape
-Fin d'une partie       → /review jalon
-Après la feature       → /review
+Fin d'une partie       → /review jalon → commit → tag <id>-jalon-<partie>
+Après la feature       → /review → /remember save → tag <nom-du-plan>
 Après un composant UI  → /imprint
 Problème (> 1 prompt)  → /recover
 Fin de session         → /remember save

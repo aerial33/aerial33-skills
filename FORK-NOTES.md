@@ -10,6 +10,7 @@ originaux, hors périmètre de ces notes.
 | ------- | ---- | ---------- |
 | v0 | 2026-09 | Premier fork, spécifique Next.js + Payload + Tailwind, chemins et secrets écrits en dur (ancien kit agent-starter). |
 | v1 | 2026-10-01 | **Agnostique** : plus aucun chemin, dossier ni nom de secret en dur. Tout est lu dans `CLAUDE.md` et le manifeste de stack (`context/stack/stack.md`). Aligné sur le kit agent-starter en 4 couches (`context/state/`, `ui-tokens`/`ui-rules`, `build-plan`). |
+| v1.5 | 2026-10-07 | **Tags git** : `/review` termine son rapport par le tag à poser (`<id>-jalon-<partie>` au jalon, nom du plan en fin de feature), selon la section *Tags git* de la méthode. |
 | v1.4 | 2026-10-03 | **Parties et jalons** : `/architect` regroupe les étapes en parties au-delà d'environ 6 étapes ; `/review jalon` (couches 1–2 sur une partie) ; `/remember` note la partie courante. |
 | v1.3 | 2026-10-03 | **Plans persistés** : `/architect` forké (plan écrit dans le dossier de plans de `CLAUDE.md` §4, brouillon → validé, étapes atomiques `F05.1`…, écarts consignés) ; `/review` forké (référentiel = plan persisté ou entrée du build-plan) ; `/remember` renvoie au plan actif. |
 | v1.1 | 2026-10-02 | `/imprint` : la page témoin n'est jamais imprintée ; un composant externe déclaré dans `designs/brief.md` est noté comme tel. Ajout du skill original `/design-system` (variantes provisoire / complète de F00). |
@@ -33,6 +34,7 @@ originaux, hors périmètre de ces notes.
 | Référentiel de la couche 1 : **plan persisté** (étapes, écarts, hors périmètre), à défaut l'**entrée du build-plan** | Une feature sans `/architect` a quand même un critère ; on ne demande au développeur qu'en dernier recours. |
 | Dérive non déclarée = sévérité *Important* (*Critical* si elle touche une décision) | La règle « plan figé + écarts » devient vérifiable. |
 | Mode **`/review jalon`** : couches 1 et 2 sur une partie et son jalon | Corriger une dérive après 3 étapes plutôt qu'à la fin ; la couche 3 reste globale. |
+| Rapport terminé par le **tag git** à poser (jalon ou fin de feature), jamais posé pendant la review | L'avancement du plan se lit dans `git tag` ; le tag n'arrive qu'après accord, gate verte et commit. |
 | Ne modifie jamais le plan | La review informe, elle ne corrige pas. |
 
 ## /imprint — différences avec l'original

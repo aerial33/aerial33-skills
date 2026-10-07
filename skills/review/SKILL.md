@@ -5,7 +5,8 @@ description: After building a feature, verify it matches what was planned, respe
 
 > FORK aerial33 du skill JavaScript Mastery. Différence vs original : le référentiel de la couche 1 est le
 > **plan persisté** par `/architect` (étapes cochées, écarts consignés), à défaut l'entrée du build-plan ;
-> chemins lus dans `CLAUDE.md`, jamais en dur. Voir FORK-NOTES.md.
+> chemins lus dans `CLAUDE.md`, jamais en dur ; le rapport se termine par le **tag git** à poser.
+> Voir FORK-NOTES.md.
 
 Building is not done when the code runs. It is done when the code is correct.
 
@@ -122,7 +123,22 @@ Benchmark: [plan path · status · part reviewed, if milestone review] or [build
 
 [If no issues: "No issues found. This feature is ready to ship."]
 [If issues: "Resolve the above before moving to the next feature."]
+
+### Tag git
+To set once the review is settled, the gate is green and the commit is made:
+git tag -a <tag> -m "<message>"
 ```
+
+**Tag git.** Close every report with the tag to set, ready to copy. Name and message follow the
+**Tags git** convention of the method file (`ai-workflow-rules.md`, path from the reading list of
+`CLAUDE.md` §1). With the agent-starter kit:
+
+- milestone review → `<id>-jalon-<part>` in lowercase (`f06-jalon-a`), message `F06 A — <part title>`;
+- full review → the plan file name without `.md` (`f06-media-stockage`), or `<id>-<slug>` of the
+  build-plan entry when there is no plan; message `F06 — <feature title> (terminé)`.
+
+If the method file has no such section, use this convention and say so. Run `git tag -l '<id>-*'`
+first: a tag that already exists is reported, never moved.
 
 ---
 
@@ -140,6 +156,11 @@ The developer owns the quality decision. You inform it.
 
 This skill never edits the plan. Once the developer confirms the review is settled and the gate has
 passed, the plan's status can move to `terminé` — as part of building, not of reviewing.
+
+The tag works the same way: never set during the review. Once the developer confirms, the issues are
+settled, the gate is green and the commit is made, remind them of the tag from the report — or set it
+on that commit if they ask (annotated, `git tag -a`). A full review's tag goes on the commit of the
+`/remember save` that closes the feature.
 
 ---
 
