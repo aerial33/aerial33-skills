@@ -30,7 +30,7 @@ pas les skills. Si une information manque, le skill le dit et demande — il n'i
 | `/recover` | Quand quelque chose casse | Original JSM |
 | `/design-system` | Avant la première page (F00, provisoire ou complète), puis pour faire évoluer le système | **Original aerial33** — thème par défaut + layout, ou brief, tokens, page témoin, gel ; lit le manifeste |
 | `/imprint` | Après un composant UI | **Forké** — contrôle aux tokens, lit le manifeste |
-| `/remember` | Fin & début de session | **Forké** — frontière d'état, renvoie au plan actif, lit CLAUDE.md et le manifeste |
+| `/remember` | Fin & début de session | **Forké** — statut / décisions / handoff séparés, restore par mode et par sections, renvoie au plan actif, lit CLAUDE.md et le manifeste |
 
 ### Skills de stack
 

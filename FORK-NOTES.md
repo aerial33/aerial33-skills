@@ -10,6 +10,7 @@ originaux, hors périmètre de ces notes.
 | ------- | ---- | ---------- |
 | v0 | 2026-09 | Premier fork, spécifique Next.js + Payload + Tailwind, chemins et secrets écrits en dur (ancien kit agent-starter). |
 | v1 | 2026-10-01 | **Agnostique** : plus aucun chemin, dossier ni nom de secret en dur. Tout est lu dans `CLAUDE.md` et le manifeste de stack (`context/stack/stack.md`). Aligné sur le kit agent-starter en 4 couches (`context/state/`, `ui-tokens`/`ui-rules`, `build-plan`). |
+| v1.6 | 2026-10-10 | **Restore allégé** : `/remember` découpé en tronc commun + `modes/save.md` / `modes/restore.md` (un seul chargé) ; restore en deux modes (reprise : plan entier + entrée du build-plan ; nouvelle feature : ligne « Nouvelle feature »), lecture par **sections** (invariants, entrée du build-plan), `CLAUDE.md` non relu s'il est déjà en contexte. Décisions durables → **journal des décisions** (`CLAUDE.md` §4), plus dans le tracker ; `/architect` lit ce journal avant de planifier. |
 | v1.5 | 2026-10-07 | **Tags git** : `/review` termine son rapport par le tag à poser (`<id>-jalon-<partie>` au jalon, nom du plan en fin de feature), selon la section *Tags git* de la méthode. |
 | v1.4 | 2026-10-03 | **Parties et jalons** : `/architect` regroupe les étapes en parties au-delà d'environ 6 étapes ; `/review jalon` (couches 1–2 sur une partie) ; `/remember` note la partie courante. |
 | v1.3 | 2026-10-03 | **Plans persistés** : `/architect` forké (plan écrit dans le dossier de plans de `CLAUDE.md` §4, brouillon → validé, étapes atomiques `F05.1`…, écarts consignés) ; `/review` forké (référentiel = plan persisté ou entrée du build-plan) ; `/remember` renvoie au plan actif. |
@@ -59,6 +60,8 @@ originaux, hors périmètre de ces notes.
 | Secrets : liste générique + **noms déclarés par le manifeste** | Sécurité adaptée à la stack sans l'écrire dans le skill. |
 | Champ **Gate status** (commande lue dans le manifeste) | La session suivante connaît la baseline. |
 | Champ **Active plan** ; save vérifie cases et écarts du plan, restore le relit ; « Next session » cite l'étape (`F05.3`) | Le handoff renvoie au plan au lieu de le recopier. |
+| **Journal des décisions** séparé du tracker (chemin lu dans §4) ; une décision qui contraint le code est aussi écrite dans son fichier de règles | Le tracker est relu à chaque session : sur le boilerplate il était passé de 3,7 k à 24 k caractères en 8 jours, dont 20 k de décisions et notes. |
+| Restore en **modes** (reprise / nouvelle feature), lecture **par sections**, `CLAUDE.md` non relu, un seul fichier de mode chargé | Coût d'entrée stable d'une session à l'autre ; le plan actif reste lu en entier (contrat). |
 
 ## Coût du fork
 

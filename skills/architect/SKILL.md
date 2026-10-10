@@ -19,7 +19,8 @@ Never assume paths. Resolve them, in this order:
 1. **`CLAUDE.md`** (project root):
    - **reading list** (§1) — what to read *always* and *per task* (for a new feature);
    - **state boundaries** table (§4) — the **plans folder** and the plan file naming
-     (in agent-starter: `context/plans/<ID>-<slug>.md`).
+     (in agent-starter: `context/plans/<ID>-<slug>.md`), and the **decisions log** if declared
+     (in agent-starter: `context/state/decisions.md`).
 2. **Build plan** — the file listing features with IDs (in agent-starter: `context/build-plan.md`).
    Identify the **feature ID** being planned (e.g. `F05`). If the work maps to no entry, say so and
    ask whether to add one to the build plan first — never invent an ID.
@@ -34,6 +35,9 @@ Before saying anything, take stock of what already exists:
 
 - Read the feature description the developer gave you, and its **build-plan entry**
 - Read the files the reading list declares for a new feature, and the existing code it touches
+- Read the **decisions log** in full (or, in an older layout, the decisions section of the progress
+  tracker): the plan must not silently contradict a past decision. A decision this plan revisits is
+  surfaced in Step 3, never overridden quietly
 - Look in the plans folder for a plan with the same feature ID:
   - **brouillon** (draft) → resume it instead of starting over;
   - **validé / en cours** → do not rewrite it. Ask: is this a deviation to record in its
