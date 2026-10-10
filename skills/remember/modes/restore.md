@@ -1,122 +1,74 @@
 # /remember restore
 
-> Prerequisite: Step 0 of `SKILL.md` is resolved.
+> Prerequisite: Step 0 of `SKILL.md`.
 
-Goal: the next session works as well as if it had never stopped, **without** loading what the next
-action does not need. Read what is declared, once, and only the sections the reading list names.
+Goal: the next session works as if it had never stopped, loading only what the next action needs.
 
 ## Budget — restore reads, it does not investigate
 
-- **Allowed:** the files and sections the mode declares (plus the one decisions-log search of mode
-  *Nouvelle feature*), and at most these commands: `git status --short`, `git branch --show-current`,
-  `git log --oneline -5`.
-- **Not during restore:** reading source code, searching other files or the decisions log for a term,
-  checking services (database, containers, dev server), comparing branches, running the gate or tests,
-  listing folders to look for something.
-- Read each file **once**; never re-read a file to confirm a detail.
-- A mismatch is reported only from what these reads show (memory file ↔ plan ticks ↔ git). Anything
-  else worth checking goes in the confirmation under **To check** — proposed, not done.
+- **Allowed:** the files and sections below, and at most `git status --short`,
+  `git branch --show-current`, `git log --oneline -5`.
+- **Not now:** source code, searches (except the one of mode *Nouvelle feature*), services (database,
+  containers, dev server), branch comparisons, gate or tests, folder listings. Read each file once.
+- Anything else worth checking goes under **To check** in the confirmation — proposed, not done.
 
-## How to read — one script call, not file by file
+## How to read
 
-The file-reading tool loads **whole files with line numbers**: reading a 14 k file for one 300-character
-entry, or a 20 k registry for its index, is where restore cost comes from. So:
+- The file-reading tool loads **whole files with line numbers**. So everything that is only read goes
+  through **one** call of this skill's script, which prints files or named sections without numbers:
+  `sh <skill folder>/scripts/read-sections.sh <file> "<file>#<Section>" "<file>#<A>|<B>" …`
+  A section is matched by the start of its heading text and ends at the next heading of the same or
+  higher level, or at `---`. `!! …` lines are missing files or sections: report them, do not hunt.
+- Files this session **will edit** use the file-reading tool: the **memory file** and the **active plan**.
+  Never re-read what the script printed, unless you must edit it later.
 
-- Everything that is **only read** goes through **one** call of this skill's script
-  `scripts/read-sections.sh` (in this skill's folder), which prints whole files or named sections, without
-  line numbers:
+## Step 1 — Memory file
 
-  ```
-  sh <skill folder>/scripts/read-sections.sh \
-    <file> "<file>#<Section>" "<file>#<Section A>|<Section B>" …
-  ```
+File-reading tool. It decides the mode. Absent or empty → say so, mode **Nouvelle feature** with the
+tracker's next unchecked ID.
 
-  A section is matched by the start of its heading text (`#Invariants`, `#F09 `, `#Index|Baseline`) and
-  runs to the next heading of the same or higher level, or to a `---` line. Missing files or sections are
-  printed as `!! …`: report them, do not hunt for them.
-- Files this session **will edit** are read with the file-reading tool instead (the editor requires it,
-  and reading them twice would cost double): the **memory file** (Step 1) and the **active plan** (ticked
-  at every step).
-- Never re-read with the file-reading tool what the script already printed. If work later needs to
-  **edit** one of those files, read it then.
+## Step 2 — One script call
 
-## Step 1 — Read the memory file
+1. **Always** list of `CLAUDE.md` §1 (minus `CLAUDE.md` and the memory file); a named section becomes
+   `"<file>#<Section>"`.
+2. **Mode:**
+   - **Reprise** — the memory file names a plan `validé` or `en cours`: the *resume* row, by default the
+     **build-plan entry only** (`"<build plan>#<ID> "`). The **plan** itself in full, with the
+     file-reading tool (the contract: scope, language, decisions, steps, deviations). Not the overview,
+     glossary or decisions log — the plan carries what applies.
+   - **Nouvelle feature** — no active plan: the **build-plan entry** only, the plan if a **draft**
+     exists, and one search of the decisions log for the ID and the entry's terms
+     (`grep -n -E 'F09|hero' <log>`). Overview, glossary and full log are `/architect`'s to load.
+3. **Per task**, for the kind of next action in the memory file (UI, data model, code…), with the
+   sections the reading list names (e.g. `"<UI registry>#Index|Baseline"`). In *Nouvelle feature*, only
+   if the next action is direct work, not planning.
 
-With the file-reading tool. It decides the mode. If it is absent or empty, say so (first session or not
-saved) and use mode **Nouvelle feature** with the next unchecked ID of the progress tracker.
+No reading list in `CLAUDE.md` → say so, read the markdown under `context/` except state files and
+designs, recommend adding one. `CLAUDE.md` stays the source of truth over other agents' rule files.
 
-## Step 2 — Build the list and read it in one call
+## Step 3 — Confirm (do not start building)
 
-Collect, in this order, then run the script **once** with the whole list:
-
-1. The **"always"** list of `CLAUDE.md` §1 — skip `CLAUDE.md` itself if it is already in context and the
-   memory file (already read). An item that names a section becomes `"<file>#<Section>"`.
-2. The **mode** files:
-   - **Reprise** — the memory file names an active plan with status `validé` or `en cours`: the
-     reading list's **resume** row, or by default the feature's **build-plan entry only**
-     (`"<build plan>#<ID> "`). The **active plan itself** is read in full with the file-reading tool
-     (it is the contract: scope, aligned language, decisions, steps, deviations). Do not read the project
-     overview, the glossary or the decisions log: the plan already carries what applies to this feature.
-   - **Nouvelle feature** — no active plan: the feature's **build-plan entry** only, and its plan if a
-     **draft** exists (file-reading tool). For the summary, search the decisions log for the feature ID
-     and the terms of its entry (e.g. `grep -n -E 'F09|hero' <decisions log>`) instead of reading it. Do
-     **not** read the overview, the glossary or the whole log: `/architect` loads them when planning
-     starts, and a session may first do something else (a fix, a small task).
-3. The **per-task** files for the **kind** of the next action named in the memory file (UI, data model,
-   code, library…), with the sections the reading list names (e.g. `"<UI registry>#Index|Baseline"`).
-   In mode **Nouvelle feature**, only when that next action is direct work (a fix, a small task); when it
-   is planning the feature, `/architect` decides what to read. Full registry entries are read later,
-   when the work reaches that component.
-
-Then the allowed git commands (they may share the same shell call).
-
-## Step 3 — Check the active plan against the memory file
-
-Compare its ticks and current part with the memory file and git. Report any mismatch, do not fix it
-silently (Step 5 offers the fix).
-
-If `CLAUDE.md` has no reading list, say so, read every markdown file under `context/` except the state
-files and design images, and recommend adding a reading list.
-
-Other agents' rule files (`AGENTS.md`, `.cursor/rules/`, `.windsurfrules`, `.clinerules`) may exist;
-`CLAUDE.md` remains the source of truth. Never surface raw secrets.
-
-## Step 4 — Confirm what was restored (do not start building)
+Compare the plan's ticks and part with the memory file and git. Report mismatches; never fix silently.
 
 ```
 Memory restored. Here is where we are:
 
-**Mode:** [reprise / nouvelle feature] · **Read:** [files and sections loaded, one line]
+**Mode:** [reprise / nouvelle feature] · **Read:** [files and sections, one line]
 **Last session:** [what was built]
 **Current state:** [what works] · Gate at last save: [pass/fail]
 **Progress:** [phase · last completed ID · next ID]
 **Plan:** [path · status · current part · next step ID] or none
-**Decisions in place:** [the plan's key decisions; for a new feature, the log lines found by the search]
+**Decisions in place:** [the plan's key decisions; new feature: the log lines found]
 **Next up:** [the next action]
 **Mismatches:** [memory ↔ plan ↔ git, one line each — or none]
-**To check:** [verifications proposed, not done — or none]
+**To check:** [proposed, not done — or none]
 
-Correct anything that looks wrong before we proceed. Say yes to continue.
+Correct anything that looks wrong. Say yes to continue.
 ```
 
-Only after the developer confirms does the session continue.
+With mismatches, add: `Update these lines of the memory file so the next restore is clean? (yes / no)`.
+On yes, edit **only** those lines and `Last updated` (`[date], handoff corrected at restore`) — never the
+rest, the tracker or the plan; today's work is `/remember save`'s job.
 
-## Step 5 — Correct the handoff (only if there were mismatches)
-
-The memory file is rewritten only by `/remember save`; until then every restore would report the same
-stale lines. So, when **Mismatches** is not "none", ask once, with the confirmation:
-
-```
-Update these lines of the memory file so the next restore is clean? (yes / no)
-```
-
-On yes: edit **only** the lines the mismatches name (e.g. a commit now done, a "Next session" item
-already handled), and the `Last updated` line (`[date], handoff corrected at restore`). Never rewrite
-the rest, never add today's work (that is `/remember save`'s job), never touch the tracker or the plan.
-On no: change nothing.
-
-## If memory is incomplete
-
-Say so — name what is unclear or absent. Do not guess. If the next action needs a file the mode did not
-load (e.g. the overview to settle a scope question), read it then — the modes set the default, not a
-ban.
+Nothing continues before the developer confirms. Memory incomplete → name what is missing, do not
+guess. If the next action needs a file the mode did not load, read it then: modes set the default, not a ban.

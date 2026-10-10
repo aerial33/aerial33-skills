@@ -3,18 +3,11 @@ name: imprint
 description: After building any UI component, extract the visual patterns that matter for consistency, check them against the project's design tokens, and record them in the UI registry — so every component built next matches what came before and uses the design system instead of bypassing it. Paths, component folders and token source are read from the project's CLAUDE.md and stack manifest, never hardcoded.
 ---
 
-> FORK aerial33 du skill JavaScript Mastery. Différences vs original : contrôle de conformité aux
-> tokens (pas un simple enregistrement), exclusion du code généré, et **aucun chemin en dur** — tout
-> est lu dans `CLAUDE.md` et le manifeste de stack du projet (architecture agent-starter).
-> Voir FORK-NOTES.md.
+> Fork aerial33 du skill JavaScript Mastery — différences dans FORK-NOTES.md.
 
-UI consistency does not happen by accident. It happens because every component is built with
-awareness of what already exists — and against a single source of design truth.
-
-Each AI-built component tends to be built in isolation: spacing drifts, colors vary, radius is
-inconsistent, and raw values creep in that bypass the design system. This skill reads what was just
-built, checks it against the canonical tokens, extracts the patterns that matter, and records them so
-every future component can match.
+Components built in isolation drift (spacing, colors, radius, raw values bypassing the design system).
+This skill reads what was just built, checks it against the tokens, and records the patterns that matter
+so every next component matches.
 
 ---
 

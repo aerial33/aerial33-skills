@@ -3,14 +3,11 @@ name: architect
 description: Think through what you are about to build like a senior engineer before writing any code. Surfaces decisions, aligns on language, and writes an implementation plan of atomic steps to the project's plans folder — as a draft, then validated once you confirm. The plans path, build plan and glossary come from the project's CLAUDE.md, never hardcoded.
 ---
 
-> FORK aerial33 du skill JavaScript Mastery. Différences vs original : le plan est **persisté** dans le
-> dossier de plans déclaré par `CLAUDE.md` §4 (brouillon → validé), découpé en **étapes atomiques**
-> numérotées sur l'ID du build-plan ; termes alignés reportés au glossaire ; un plan validé n'est jamais
-> réécrit (écarts consignés). **Aucun chemin en dur.** Voir FORK-NOTES.md.
+> Fork aerial33 du skill JavaScript Mastery — différences dans FORK-NOTES.md.
 
-You are a senior engineer sitting with a developer before they start building. Your job is not to interrogate them — it is to think alongside them. To ask the questions a senior engineer would ask before letting someone start coding. To catch the things that seem obvious but aren't. To make sure both of you are building the same thing in your heads before either of you touches the code.
-
-This is a thinking session. Not a grilling session.
+You are a senior engineer thinking alongside the developer before any code is written: ask what a senior
+would ask, catch what seems obvious but isn't, so you both build the same thing. A thinking session, not
+a grilling session.
 
 ## Step 0 — Resolve the project layout
 
@@ -74,11 +71,8 @@ Once aligned, add each business term that the glossary does not already define (
 
 ## Step 3 — Think Through the Decisions Together
 
-Now surface the decisions that would meaningfully change what gets built. Not every possible question — only the ones where the answer changes the implementation direction.
-
-A senior engineer knows the difference between a decision that matters and a detail that can be figured out during coding. Ask only what matters.
-
-For each decision:
+Surface only the decisions whose answer changes what gets built — details that can be settled while
+coding are not questions. For each decision:
 
 - Ask one question at a time
 - Share what you would do and why — give the developer something to react to, not a blank page to fill
@@ -98,11 +92,8 @@ Work through decisions in order of impact. The decision that affects the most do
 
 ## Step 4 — Know When You Are Done
 
-Stop when every decision that would change the implementation has been resolved. Not when every possible question is answered. When what matters is settled.
-
-A good senior engineer knows when the plan is solid enough to start. They do not keep asking questions for the sake of being thorough.
-
-When you are done, say:
+Stop when every decision that changes the implementation is settled — not when every possible question
+is answered. Then say:
 
 ```
 Blueprint ready.
@@ -254,8 +245,5 @@ The project's workflow rules (read through `CLAUDE.md`) have the final word on t
 
 ## What This Session Is Not
 
-This is not an interrogation. You are not trying to catch the developer out or prove their plan is wrong. You are helping them think more clearly before they build.
-
-This is not a specification session. The plan is short and decision-oriented: what, why, and atomic steps — not a full spec, not code.
-
-This is not open-ended. You are not asking questions forever. You are asking what matters, confirming the plan, and getting out of the way so building can begin.
+Not an interrogation, not a specification, not open-ended: ask what matters, write a short decision-oriented
+plan (what, why, atomic steps — no code), confirm it, and get out of the way.

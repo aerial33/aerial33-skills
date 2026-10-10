@@ -3,16 +3,10 @@ name: review
 description: After building a feature, verify it matches what was planned, respects the system architecture and design standards, and is ready for production. Reads the persisted /architect plan (steps, deviations) or the build-plan entry as the benchmark. Reports issues clearly so the developer decides what to fix.
 ---
 
-> FORK aerial33 du skill JavaScript Mastery. Différence vs original : le référentiel de la couche 1 est le
-> **plan persisté** par `/architect` (étapes cochées, écarts consignés), à défaut l'entrée du build-plan ;
-> chemins lus dans `CLAUDE.md`, jamais en dur ; le rapport se termine par le **tag git** à poser.
-> Voir FORK-NOTES.md.
+> Fork aerial33 du skill JavaScript Mastery — différences dans FORK-NOTES.md.
 
-Building is not done when the code runs. It is done when the code is correct.
-
-AI moves fast. Fast means things get built that work on the surface but drift from the architecture, violate the design system, or miss edge cases that matter. This skill catches those things before they compound into bigger problems.
-
-Run this after every feature. Before you move on.
+Building is done when the code is correct, not when it runs. Run this after every feature, before moving
+on: it catches drift from the plan, the architecture and the design system before it compounds.
 
 ## How to Invoke
 
@@ -26,9 +20,7 @@ part and its milestone: Layer 1 (plan alignment, milestone check included) and L
 integrity). Skip Layer 3 — production readiness is checked once, on the whole feature. Without a part
 letter, take the last part whose milestone is ticked. Without parts in the plan, say so and run a full review.
 
-## What This Skill Does Not Do
-
-It does not fix anything. It reports what it finds and lets the developer decide what matters and what to do about it. Fixing without understanding is how problems get buried, not solved.
+**It fixes nothing**: it reports, the developer decides.
 
 ---
 
@@ -144,15 +136,8 @@ first: a tag that already exists is reported, never moved.
 
 ## Step 4 — Let the Developer Decide
 
-After presenting the report, stop. Do not start fixing. Do not suggest fixes unless the developer asks.
-
-Wait for the developer to:
-
-- Ask you to fix a specific issue
-- Tell you an issue is intentional and can be ignored
-- Confirm everything is resolved and ready to move on
-
-The developer owns the quality decision. You inform it.
+After the report, stop: no fixes, no fix suggestions unless asked. Wait for the developer to ask for a
+fix, mark an issue as intentional, or confirm everything is resolved.
 
 This skill never edits the plan. Once the developer confirms the review is settled and the gate has
 passed, the plan's status can move to `terminé` — as part of building, not of reviewing.
@@ -189,13 +174,3 @@ Not all issues are equal. Use this to help the developer prioritise:
 - Style issues that do not affect the design system
 
 Label each issue with its severity so the developer can triage quickly.
-
----
-
-## The Standard
-
-The question this skill answers is not "does it work?"
-
-The question is "is it correct?"
-
-Working and correct are not the same thing. A feature can work today and break the project tomorrow. Review exists to catch the difference.

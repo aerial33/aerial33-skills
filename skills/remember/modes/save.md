@@ -1,131 +1,58 @@
 # /remember save
 
-> Prerequisite: Step 0 of `SKILL.md` is resolved.
+> Prerequisite: Step 0 of `SKILL.md`.
 
-## Security Boundary
+**Secrets.** Never write one: redact (`[REDACTED]`) every name listed under Secrets in the stack
+manifest and anything credential-like (connection strings, API keys, tokens, OAuth secrets, storage
+credentials, webhook secrets, cookies, auth headers, passwords, private keys, certificates, one-time
+codes). In doubt, treat it as sensitive.
 
-Never persist secrets. Store a redacted placeholder instead (e.g. `[REDACTED]`). Treat as sensitive:
+## Step 1 — Progress tracker (status only)
 
-- every name listed under **Secrets** in the stack manifest;
-- in any case: connection strings, API keys, access/refresh/session tokens, OAuth client secrets,
-  storage credentials, webhook secrets, cookies, auth headers, passwords, private keys, certificates,
-  one-time codes.
+- Tick completed features with **build-plan IDs** (`F04`); never invent one — work with no entry: say so,
+  ask whether to add it to the build plan.
+- Update **Current Status** (phase, last completed, next); add new **open questions**, remove the ones
+  answered (the answer is a decision → Step 2).
+- The tracker keeps its three sections only. If it still holds a decisions or notes section and §4
+  declares a decisions log, propose moving them there verbatim — never without agreement.
 
-If unsure whether something is sensitive, treat it as sensitive and omit or redact it.
+## Step 2 — Durable decisions
 
-## The State Boundary
+- One line per decision in the **decisions log**: `AAAA-MM-JJ — <ID> — <decision> — <why>`.
+- A decision that **constrains future code** (convention, boundary, library, UI rule) is also written in
+  the rule file that governs it (method § "Keeping docs in sync"), where tasks will read it.
+- Decisions already in the active plan stay there; at feature end, only those that outlive it go to the log.
+- Frictions, workarounds, traps → the log's **Notes** (a library trap also to its library docs).
 
-Route information by lifecycle and by **who needs to read it when**:
+## Step 3 — Active plan (status `en cours`)
 
-- **Progress tracker** = project STATUS: current phase, checklist by build-plan ID, open questions.
-  Read at every session start — so it stays **short**: no decision log, no notes.
-- **Decisions log** = durable DECISIONS (date — ID — decision — why) and notes (frictions, workarounds).
-  Append-only history. **Not** read at session start: `/architect` reads it before planning, anyone
-  searches it (grep) before changing an existing choice.
-- **Rule files** (project architecture, UI rules, library docs, glossary — the "Keeping docs in sync"
-  list of the method) = decisions that **constrain future code** are also promoted there, so they are
-  read whenever the task needs them.
-- **Memory file** = SESSION handoff: just enough to resume tomorrow without re-explaining.
-  Overwritten each save.
-- **UI registry** = de-facto design system. Owned by `/imprint`, not by this skill.
-- **Plan** = the validated `/architect` plan of a feature. Owned by `/architect`; this skill only checks
-  its ticks and deviations are up to date, and **points** to it — never copies its steps.
+Every step **verified** this session is ticked (never an unverified one; same for a milestone), and
+every deviation has its dated line in **Écarts au plan** — never rewrite the plan. Fix or report what is
+missing before the handoff.
 
----
+## Step 4 — Handoff (memory file)
 
-## Step 1 — Update the progress tracker (status)
-
-If this session produced completed units:
-
-- Tick completed features using the **IDs of the build plan** (e.g. `F04`). Never invent an ID; if work
-  does not map to a build-plan entry, say so and ask whether to add it to the build plan.
-- Update **Current Status** (phase, last completed, next).
-- Add any new **open question**; remove the ones resolved this session (their answer is a decision →
-  Step 1a).
-
-Keep the tracker to its sections (status, checklist, open questions). If it holds a decisions or notes
-section (older layout) and the project declares a decisions log, say so and propose moving those
-sections to the log, verbatim — do not move them without the developer's agreement.
-
-## Step 1a — Record durable decisions
-
-For each decision that future work depends on:
-
-- append one line to the **decisions log**: `AAAA-MM-JJ — <ID> — <decision> — <why>`;
-- if it **constrains future code** (a convention, a boundary, a library choice, a UI rule), also write
-  it in the rule file that governs it (method § "Keeping docs in sync": project architecture, UI rules,
-  library docs, glossary…), so it is read whenever that kind of task comes up;
-- decisions already recorded in the active plan (Décisions, Écarts) are not copied: once the feature is
-  done, only those that outlive it go to the log.
-
-Frictions, workarounds and traps go to the log's **Notes** (traps of a library also to its library docs).
-
-## Step 1b — Check the active plan
-
-If the current feature has a plan in the plans folder with status `en cours`:
-
-- every step that was **verified** this session is ticked — never tick an unverified step; same for a
-  milestone (jalon) and its end-to-end check;
-- every deviation from the plan has its dated line in **Écarts au plan** — never rewrite the plan itself.
-
-If something is missing, fix it or tell the developer before writing the handoff.
-
-## Step 2 — Write the session handoff to the memory file
-
-Think like handing off to an equally-skilled colleague who knows nothing about today. **Aim for about
-60 lines**: point to the plan, the tracker and the log instead of restating them.
-
-- **What was built** — precise: files, data-model entities, routes, components. Not "added the blog" but
-  "created the `posts` collection with public read / editor write access and its detail route".
-- **Data-model / schema changes** — and whether a migration was generated and applied.
-- **Env vars needed** — names only, values redacted.
-- **Problems solved** — so they are not solved twice (one line each; details in the log's Notes).
-- **Current state** — what works, what is partial, what is broken.
-- **Gate status** — did the verification command from the stack manifest pass at save time? Which step failed?
-- **Active plan** — path, status, current part (if the plan has parts), last ticked step; or "none".
-- **Next session starts with** — the very next action, referencing the build-plan ID, and the **plan step**
-  if there is one (e.g. "F07.5, part B — see the plan"), and its **kind** (UI, data model, code…) so
-  restore knows which per-task files to load. Do not restate what the plan already says.
-- **Open questions** — or a pointer to the progress tracker.
-
-Do not capture: implementation details visible in the code, decisions already in the log, the plan or
-context files, the process of how something was built, any secret.
-
-## Safety check before writing
-
-Re-read the content. Remove or redact any sensitive value.
-
-## Overwrite confirmation
-
-The memory file holds only the most recent session. If it already has content, summarise it and ask:
-
-```
-The memory file already covers: [one-line summary].
-Overwrite with this session's memory? (yes / no)
-```
-
-If no → "No changes made."
-
-## Format
+For an equally skilled colleague who knows nothing of today. **About 60 lines**: point to the plan,
+tracker and log instead of restating them. Never: details visible in the code, decisions already
+recorded, how it was built, a secret.
 
 ```markdown
 # Memory — [Feature or Session Name]
 Last updated: [date and time]
 
-## What was built
-## Data-model / schema changes
-## Env vars needed
-## Problems solved
-## Current state
-## Gate status
-## Active plan
-## Next session starts with
-## Open questions
+## What was built          ← precise: files, entities, routes, components; commits
+## Data-model / schema changes   ← and whether a migration was generated and applied
+## Env vars needed         ← names only
+## Problems solved         ← one line each; details in the log's Notes
+## Current state           ← works / partial / broken
+## Gate status             ← result of the manifest's gate command at save time; failing step
+## Active plan             ← path, status, current part, last ticked step — or "none"
+## Next session starts with ← next action with build-plan ID and plan step (e.g. "F07.5, part B"), and
+##                            its kind (UI, data model, code…) so restore loads the right files
+## Open questions          ← or a pointer to the tracker
 ```
 
-After writing:
+Re-read for secrets before writing. If the file has content, summarise it in one line and ask
+`Overwrite with this session's memory? (yes / no)` — no → "No changes made."
 
-```
-Memory saved to [memory path]. Status in [tracker path], decisions in [log path].
-Next session: run /remember restore.
-```
+Then: `Memory saved to [path]. Status in [tracker], decisions in [log]. Next session: /remember restore.`
