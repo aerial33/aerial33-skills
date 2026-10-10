@@ -10,6 +10,7 @@ originaux, hors périmètre de ces notes.
 | ------- | ---- | ---------- |
 | v0 | 2026-09 | Premier fork, spécifique Next.js + Payload + Tailwind, chemins et secrets écrits en dur (ancien kit agent-starter). |
 | v1 | 2026-10-01 | **Agnostique** : plus aucun chemin, dossier ni nom de secret en dur. Tout est lu dans `CLAUDE.md` et le manifeste de stack (`context/stack/stack.md`). Aligné sur le kit agent-starter en 4 couches (`context/state/`, `ui-tokens`/`ui-rules`, `build-plan`). |
+| v1.6.2 | 2026-10-10 | **Restore borné** : lectures déclarées + 3 commandes git au plus, aucune enquête (code, services, recherches) ; ce qui reste à vérifier est proposé (« To check »). **Index du registre UI** : `/imprint` tient une ligne par composant en tête du registre ; les sessions lisent Index + Baseline, l'entrée complète seulement pour le composant concerné. Mesuré en 1.6.1 : restore = 49,8k puis 57,3k tokens sur le même état, dont 25 à 33k d'exploration non demandée. |
 | v1.6.1 | 2026-10-10 | Restore **nouvelle feature** allégé : entrée du build-plan + recherche (grep) dans le journal des décisions ; overview, glossaire et journal complet laissés à `/architect`. `/architect` ne relit pas un fichier déjà chargé en entier dans la session. Mesuré sur le boilerplate : 82,6k tokens après un restore *nouvelle feature* en 1.6.0. |
 | v1.6 | 2026-10-10 | **Restore allégé** : `/remember` découpé en tronc commun + `modes/save.md` / `modes/restore.md` (un seul chargé) ; restore en deux modes (reprise : plan entier + entrée du build-plan ; nouvelle feature : ligne « Nouvelle feature »), lecture par **sections** (invariants, entrée du build-plan), `CLAUDE.md` non relu s'il est déjà en contexte. Décisions durables → **journal des décisions** (`CLAUDE.md` §4), plus dans le tracker ; `/architect` lit ce journal avant de planifier. |
 | v1.5 | 2026-10-07 | **Tags git** : `/review` termine son rapport par le tag à poser (`<id>-jalon-<partie>` au jalon, nom du plan en fin de feature), selon la section *Tags git* de la méthode. |
@@ -49,6 +50,7 @@ originaux, hors périmètre de ces notes.
 | Colonne **Token-compliant?** + section **Token violations** | Conformité visible et actionnable. |
 | Audit comparé aux tokens | La baseline s'appuie sur la source de vérité, pas seulement sur la majorité. |
 | Si une info manque → **demande**, ne crée jamais le registry ailleurs | Évite les registres en double. |
+| **Index** en tête du registre (une ligne par composant), tenu à chaque écriture ; `/imprint` lit le registre entier, les autres sessions Index + Baseline | Le registre est relu à chaque tâche d'interface et grossit à chaque composant (19,6 k caractères sur le boilerplate après F08). |
 
 ## /remember — différences avec l'original
 

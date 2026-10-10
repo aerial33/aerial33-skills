@@ -37,7 +37,7 @@ Never assume paths. Resolve them, in this order:
 1. **`CLAUDE.md`** (project root)
    - its reading list (§1) → the files to read for **UI / interface** work
      (in agent-starter: `context/ui-tokens.md`, `context/ui-rules.md`, `context/state/ui-registry.md`,
-     `context/designs/`);
+     `context/designs/`) — `/imprint` itself reads the **whole** registry, since it writes it;
    - its **state boundaries** table (§4) → the exact path of the **UI registry**.
 2. **Stack manifest** — `context/stack/stack.md` (or the manifest `CLAUDE.md` points to):
    - **component folders to imprint**;
@@ -112,6 +112,27 @@ For each extracted value, check conformance:
 
 Open the registry at the path resolved in Step 0. Create it there if missing. Append a new entry, or
 update the existing entry if this component type is already registered. Never duplicate.
+
+### The index (always up to date)
+
+The registry starts with an `## Index` section, right after its header: **one line per registered
+component**, then one line per cross-cutting rule section. Sessions read the *Index* and the
+*Baseline* only; they open a full entry (`### <Name>`) when they reuse, modify or build something
+similar to that component. So the index line must say enough to know **when** to open the entry.
+
+```markdown
+## Index
+
+> One line per component. Read this Index and the Baseline for any UI work; open the full entry
+> (`### <Name>`) before reusing, modifying or building something similar. Kept up to date by `/imprint`.
+
+- **[Name]** — `[file or folder]` — [type, short] — [the rule that matters most, one line]
+- Cross-cutting: § [section title] — [what it governs, one line]
+```
+
+Every write updates the index in the same edit: new entry → new line; updated entry → its line
+rewritten if the essential rule changed; new cross-cutting section → new line. If the registry has
+entries but no index (older layout), build the index from the existing entries first and say so.
 
 ### Entry format
 
@@ -200,6 +221,7 @@ Confirm the baseline and I will write it to the UI registry.
 
 Write it to the registry, labelled `## Baseline — Established [date] via /imprint audit`, then list the
 components that deviate: file → what's wrong → what it should be.
+Create or refresh the `## Index` (Step 4) at the same time.
 
 ---
 

@@ -6,6 +6,18 @@ Goal: the next session works as well as if it had never stopped, **without** loa
 action does not need. Read what is declared; read it once; read sections, not whole files, when the
 reading list names a section.
 
+## Budget — restore reads, it does not investigate
+
+- **Allowed:** the files and sections the mode declares (plus the one decisions-log search of mode
+  *Nouvelle feature*), and at most these commands: `git status --short`, `git branch --show-current`,
+  `git log --oneline -5`.
+- **Not during restore:** reading source code, searching other files or the decisions log for a term,
+  checking services (database, containers, dev server), comparing branches, running the gate or tests,
+  listing folders to look for something.
+- Read each file **once**; never re-read a file to confirm a detail.
+- A mismatch is reported only from what these reads show (memory file ↔ plan ticks ↔ git). Anything
+  else worth checking goes in the confirmation under **To check** — proposed, not done.
+
 ## Step 1 — Read the memory file first
 
 It decides the mode. If it is absent or empty, say so (first session or not saved) and use mode
@@ -39,6 +51,10 @@ model, code, library…) — read them now, they will not need re-reading when w
 **Nouvelle feature**, only when that next action is direct work (a fix, a small task); when it is
 planning the feature, `/architect` decides what to read.
 
+When the reading list names **sections** of a file (e.g. the *Index* and *Baseline* of the UI registry),
+extract those sections only (e.g. `awk '/^## (Index|Baseline)/{f=1;print;next} f&&/^(## |### |---)/{f=0} f' <registry>`);
+full entries are read later, when the work reaches that component.
+
 ## Step 4 — Check the active plan against the memory file
 
 Compare its ticks and current part with what the memory file says. Report any mismatch, do not fix it
@@ -62,6 +78,7 @@ Memory restored. Here is where we are:
 **Plan:** [path · status · current part · next step ID] or none
 **Decisions in place:** [the plan's key decisions; for a new feature, the log lines found by the search]
 **Next up:** [the next action]
+**To check:** [verifications proposed, not done — or none]
 
 Correct anything that looks wrong before we proceed. Say yes to continue.
 ```
