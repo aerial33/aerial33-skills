@@ -3,8 +3,7 @@
 > Prerequisite: Step 0 of `SKILL.md` is resolved.
 
 Goal: the next session works as well as if it had never stopped, **without** loading what the next
-action does not need. Read what is declared; read it once; read sections, not whole files, when the
-reading list names a section.
+action does not need. Read what is declared, once, and only the sections the reading list names.
 
 ## Budget — restore reads, it does not investigate
 
@@ -18,47 +17,63 @@ reading list names a section.
 - A mismatch is reported only from what these reads show (memory file ↔ plan ticks ↔ git). Anything
   else worth checking goes in the confirmation under **To check** — proposed, not done.
 
-## Step 1 — Read the memory file first
+## How to read — one script call, not file by file
 
-It decides the mode. If it is absent or empty, say so (first session or not saved) and use mode
-**Nouvelle feature** with the next unchecked ID of the progress tracker.
+The file-reading tool loads **whole files with line numbers**: reading a 14 k file for one 300-character
+entry, or a 20 k registry for its index, is where restore cost comes from. So:
 
-## Step 2 — Read the "always" list of `CLAUDE.md` §1
+- Everything that is **only read** goes through **one** call of this skill's script
+  `scripts/read-sections.sh` (in this skill's folder), which prints whole files or named sections, without
+  line numbers:
 
-In order, skipping `CLAUDE.md` itself if it is already in context.
+  ```
+  sh <skill folder>/scripts/read-sections.sh \
+    <file> "<file>#<Section>" "<file>#<Section A>|<Section B>" …
+  ```
 
-- When an item names a **section** of a file (e.g. "section Invariants of `architecture.md`"), extract
-  that section only, e.g. `awk '/^## Invariants/{f=1} f&&/^## /&&!/Invariants/{exit} f' <file>`.
-  Never read the whole file for one section.
-- The memory file is already read: do not read it again.
+  A section is matched by the start of its heading text (`#Invariants`, `#F09 `, `#Index|Baseline`) and
+  runs to the next heading of the same or higher level, or to a `---` line. Missing files or sections are
+  printed as `!! …`: report them, do not hunt for them.
+- Files this session **will edit** are read with the file-reading tool instead (the editor requires it,
+  and reading them twice would cost double): the **memory file** (Step 1) and the **active plan** (ticked
+  at every step).
+- Never re-read with the file-reading tool what the script already printed. If work later needs to
+  **edit** one of those files, read it then.
 
-## Step 3 — Pick the mode and read its files
+## Step 1 — Read the memory file
 
-- **Reprise** — the memory file names an active plan with status `validé` or `en cours`: read the
-  reading list's **resume** row. In the absence of such a row: the **active plan in full** (it is the
-  contract: scope, aligned language, decisions, steps, deviations) and the feature's **build-plan entry
-  only** (extract it by ID, e.g. `awk '/^### F08 /{f=1;print;next} f&&/^##/{exit} f' <build plan>`).
-  Do not read the project overview, the glossary or the decisions log: the plan already carries what
-  applies to this feature.
-- **Nouvelle feature** — no active plan: read only the feature's **build-plan entry** (by extraction)
-  and its plan if a **draft** exists. For the summary, search the decisions log for the feature ID and
-  the terms of its entry (e.g. `grep -n -E 'F09|hero' <decisions log>`) instead of reading it. Do
-  **not** read the overview, the glossary or the whole decisions log: `/architect` loads them when
-  planning starts, and a session may first do something else (a fix, a small task).
+With the file-reading tool. It decides the mode. If it is absent or empty, say so (first session or not
+saved) and use mode **Nouvelle feature** with the next unchecked ID of the progress tracker.
 
-Then the **per-task** files for the **kind** of the next action named in the memory file (UI, data
-model, code, library…) — read them now, they will not need re-reading when work starts. In mode
-**Nouvelle feature**, only when that next action is direct work (a fix, a small task); when it is
-planning the feature, `/architect` decides what to read.
+## Step 2 — Build the list and read it in one call
 
-When the reading list names **sections** of a file (e.g. the *Index* and *Baseline* of the UI registry),
-extract those sections only (e.g. `awk '/^## (Index|Baseline)/{f=1;print;next} f&&/^(## |### |---)/{f=0} f' <registry>`);
-full entries are read later, when the work reaches that component.
+Collect, in this order, then run the script **once** with the whole list:
 
-## Step 4 — Check the active plan against the memory file
+1. The **"always"** list of `CLAUDE.md` §1 — skip `CLAUDE.md` itself if it is already in context and the
+   memory file (already read). An item that names a section becomes `"<file>#<Section>"`.
+2. The **mode** files:
+   - **Reprise** — the memory file names an active plan with status `validé` or `en cours`: the
+     reading list's **resume** row, or by default the feature's **build-plan entry only**
+     (`"<build plan>#<ID> "`). The **active plan itself** is read in full with the file-reading tool
+     (it is the contract: scope, aligned language, decisions, steps, deviations). Do not read the project
+     overview, the glossary or the decisions log: the plan already carries what applies to this feature.
+   - **Nouvelle feature** — no active plan: the feature's **build-plan entry** only, and its plan if a
+     **draft** exists (file-reading tool). For the summary, search the decisions log for the feature ID
+     and the terms of its entry (e.g. `grep -n -E 'F09|hero' <decisions log>`) instead of reading it. Do
+     **not** read the overview, the glossary or the whole log: `/architect` loads them when planning
+     starts, and a session may first do something else (a fix, a small task).
+3. The **per-task** files for the **kind** of the next action named in the memory file (UI, data model,
+   code, library…), with the sections the reading list names (e.g. `"<UI registry>#Index|Baseline"`).
+   In mode **Nouvelle feature**, only when that next action is direct work (a fix, a small task); when it
+   is planning the feature, `/architect` decides what to read. Full registry entries are read later,
+   when the work reaches that component.
 
-Compare its ticks and current part with what the memory file says. Report any mismatch, do not fix it
-silently.
+Then the allowed git commands (they may share the same shell call).
+
+## Step 3 — Check the active plan against the memory file
+
+Compare its ticks and current part with the memory file and git. Report any mismatch, do not fix it
+silently (Step 5 offers the fix).
 
 If `CLAUDE.md` has no reading list, say so, read every markdown file under `context/` except the state
 files and design images, and recommend adding a reading list.
@@ -66,7 +81,7 @@ files and design images, and recommend adding a reading list.
 Other agents' rule files (`AGENTS.md`, `.cursor/rules/`, `.windsurfrules`, `.clinerules`) may exist;
 `CLAUDE.md` remains the source of truth. Never surface raw secrets.
 
-## Step 5 — Confirm what was restored (do not start building)
+## Step 4 — Confirm what was restored (do not start building)
 
 ```
 Memory restored. Here is where we are:
@@ -78,12 +93,27 @@ Memory restored. Here is where we are:
 **Plan:** [path · status · current part · next step ID] or none
 **Decisions in place:** [the plan's key decisions; for a new feature, the log lines found by the search]
 **Next up:** [the next action]
+**Mismatches:** [memory ↔ plan ↔ git, one line each — or none]
 **To check:** [verifications proposed, not done — or none]
 
 Correct anything that looks wrong before we proceed. Say yes to continue.
 ```
 
 Only after the developer confirms does the session continue.
+
+## Step 5 — Correct the handoff (only if there were mismatches)
+
+The memory file is rewritten only by `/remember save`; until then every restore would report the same
+stale lines. So, when **Mismatches** is not "none", ask once, with the confirmation:
+
+```
+Update these lines of the memory file so the next restore is clean? (yes / no)
+```
+
+On yes: edit **only** the lines the mismatches name (e.g. a commit now done, a "Next session" item
+already handled), and the `Last updated` line (`[date], handoff corrected at restore`). Never rewrite
+the rest, never add today's work (that is `/remember save`'s job), never touch the tracker or the plan.
+On no: change nothing.
 
 ## If memory is incomplete
 
