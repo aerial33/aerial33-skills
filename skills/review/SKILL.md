@@ -1,6 +1,7 @@
 ---
 name: review
 description: After building a feature, verify it matches what was planned, respects the system architecture and design standards, and is ready for production. Reads the persisted /architect plan (steps, deviations) or the build-plan entry as the benchmark. Reports issues clearly so the developer decides what to fix.
+model: opus
 ---
 
 > Fork aerial33 du skill JavaScript Mastery — différences dans FORK-NOTES.md.

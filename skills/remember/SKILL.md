@@ -1,6 +1,7 @@
 ---
 name: remember
 description: Save what matters at the end of a session so the next session picks up exactly where you left off, or restore context at the start of a new session. Routes project status to the progress tracker, durable decisions to the decisions log and session handoff to the memory file, points to the active /architect plan instead of re-describing it, and restores only what the next action needs (sections, not whole files). Never persists secrets. File paths, reading order and secret names come from the project's CLAUDE.md and stack manifest, never hardcoded.
+model: sonnet
 ---
 
 > Fork aerial33 du skill JavaScript Mastery — différences dans FORK-NOTES.md.

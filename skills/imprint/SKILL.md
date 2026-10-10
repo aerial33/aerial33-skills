@@ -1,6 +1,7 @@
 ---
 name: imprint
 description: After building any UI component, extract the visual patterns that matter for consistency, check them against the project's design tokens, and record them in the UI registry — so every component built next matches what came before and uses the design system instead of bypassing it. Paths, component folders and token source are read from the project's CLAUDE.md and stack manifest, never hardcoded.
+model: sonnet
 ---
 
 > Fork aerial33 du skill JavaScript Mastery — différences dans FORK-NOTES.md.
