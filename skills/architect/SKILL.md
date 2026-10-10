@@ -35,6 +35,8 @@ Before saying anything, take stock of what already exists:
 
 - Read the feature description the developer gave you, and its **build-plan entry**
 - Read the files the reading list declares for a new feature, and the existing code it touches
+- A file already loaded in full in this session (e.g. by `/remember restore`) and not modified since
+  is not read again. A section or an extract does not count: read the full file
 - Read the **decisions log** in full (or, in an older layout, the decisions section of the progress
   tracker): the plan must not silently contradict a past decision. A decision this plan revisits is
   surfaced in Step 3, never overridden quietly

@@ -28,11 +28,16 @@ In order, skipping `CLAUDE.md` itself if it is already in context.
   only** (extract it by ID, e.g. `awk '/^### F08 /{f=1;print;next} f&&/^##/{exit} f' <build plan>`).
   Do not read the project overview, the glossary or the decisions log: the plan already carries what
   applies to this feature.
-- **Nouvelle feature** — no active plan: read the reading list's **new feature** row (its build-plan
-  entry by extraction, its plan if a draft exists, the overview, the glossary…).
+- **Nouvelle feature** — no active plan: read only the feature's **build-plan entry** (by extraction)
+  and its plan if a **draft** exists. For the summary, search the decisions log for the feature ID and
+  the terms of its entry (e.g. `grep -n -E 'F09|hero' <decisions log>`) instead of reading it. Do
+  **not** read the overview, the glossary or the whole decisions log: `/architect` loads them when
+  planning starts, and a session may first do something else (a fix, a small task).
 
-Then, in both modes, the **per-task** files for the **kind** of the next action named in the memory file
-(UI, data model, code, library…) — read them now, they will not need re-reading when work starts.
+Then the **per-task** files for the **kind** of the next action named in the memory file (UI, data
+model, code, library…) — read them now, they will not need re-reading when work starts. In mode
+**Nouvelle feature**, only when that next action is direct work (a fix, a small task); when it is
+planning the feature, `/architect` decides what to read.
 
 ## Step 4 — Check the active plan against the memory file
 
@@ -55,7 +60,7 @@ Memory restored. Here is where we are:
 **Current state:** [what works] · Gate at last save: [pass/fail]
 **Progress:** [phase · last completed ID · next ID]
 **Plan:** [path · status · current part · next step ID] or none
-**Decisions in place:** [the plan's key decisions; for a new feature, the relevant ones from the log]
+**Decisions in place:** [the plan's key decisions; for a new feature, the log lines found by the search]
 **Next up:** [the next action]
 
 Correct anything that looks wrong before we proceed. Say yes to continue.
