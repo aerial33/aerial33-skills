@@ -58,7 +58,8 @@ State the resolved values in one line before continuing, e.g.
   `offset`/`limit`, or `sed -n 'N,+40p'`). Unsure of the name → find it in the Index first.
 - `audit` and `migrate` go through this skill's script, and open only the entries its report points to:
   `sh <skill folder>/scripts/registry.sh check <main> <entries> <decisions log>` (run from the project
-  root), `… split <single> <main> <entries>`, `… verify <single> <main> <entries>`.
+  root), `… split <single> <main> <entries>`, `… verify <single> <main> <entries>`, and
+  `… keep <files before> -- <files after>` (every sentence before is still somewhere after).
 
 ---
 
@@ -166,7 +167,7 @@ Last updated: [date]
 
 | Property | Class |
 | -------- | ----- |
-| [only the properties that have a value] | [class] — [only if needed: `exception (…)`, `⚠️ …`, a contrast ratio] |
+| [only the properties that have a value] | [class] — [only if needed: `exception (…)`, `⚠️ …`, `non évalué`, a contrast ratio] |
 
 **Pattern notes:** [what it takes to build or review the component]
 **Token violations:** [only if there is one]
@@ -174,16 +175,23 @@ Last updated: [date]
 
 - Table properties come from: Background, Border, Border radius, Text — primary, Text — secondary,
   Spacing, Hover state, Shadow, Accent usage. **No row** for an empty property (no `none`, no `—`); no
-  compliance column — a compliant class carries no mark.
+  compliance column — a compliant class carries no mark. Reading rule, stated in the entries file
+  header: a property absent from the table has **no value** (`none`), a class without a mark is
+  compliant, `non évalué` means conformity was not checked (e.g. a shadow off the Baseline scale, an SVG
+  attribute), no `Token violations` line means none.
 - `Last updated` is the only date in the entry, with nothing after it.
-- **Pattern notes**: rendering, variants, accessibility, usage — **about ten lines at most**. Never in
-  the notes (write it where it belongs, leave at most a one-line pointer):
+- **Pattern notes**: rendering, variants, accessibility, usage — **about ten lines** as a target. Never
+  in the notes (write it where it belongs, leave at most a one-line pointer):
   - history — feature or step references, "milestone review…", "decided on…" → decisions log;
   - open points — "to decide", "risk", "provisional, to revisit" → Open Questions of the progress tracker;
   - logic or data — queries, validation, access filtering → `context/architecture.md`;
   - a rule that holds beyond the component (cited by two entries or more) → a cross-cutting section of
     the main file when it governs a family of components, `context/ui-rules.md` when it is a general
     visual rule; the entries keep a pointer.
+- **Never drop information to shorten.** What leaves the notes moves **word for word** to its
+  destination, with a pointer; only an exact duplicate whose original stays may be removed. When no
+  destination is read for the same work, the note stays long: ten lines is a target, not a reason to
+  cut. After any move, `registry.sh keep` proves nothing was lost (Step 0).
 
 ### Removed component
 

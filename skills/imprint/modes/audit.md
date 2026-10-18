@@ -39,8 +39,8 @@ none`, notes over ten lines, history and open-point markers in the notes (with h
 appears in the decisions log), possible logic in the notes, the same sentence in two entries or more,
 a section that may override the Baseline. Then judge, opening only the entries concerned:
 
-- each history or open point: already settled in the decisions log? → remove it; still open? → Open
-  Questions with a pointer; otherwise → decisions log;
+- each history or open point: still open? → Open Questions with a pointer (a one-line pointer already
+  there is fine); settled → the decisions log, unless it is already written there word for word;
 - each repeated rule → which cross-cutting section or `ui-rules.md` line;
 - each Baseline override → the corrected Baseline line.
 
@@ -63,5 +63,8 @@ Confirm the baseline and the hygiene fixes and I will write them.
 
 Write the Baseline **in place** (`## Baseline`, `Last updated: [date] (/imprint audit)`), its
 deviations, the confirmed hygiene fixes and moves, and the Index (`SKILL.md`, Step 4) in the same pass.
+Then prove nothing was lost: `registry.sh keep <registry and destination files as they were> --
+<the same files now>` (copies of the "before" files from `git show HEAD:<path>`). A missing sentence →
+put it back, or show it to the developer; never close the audit on a loss.
 
 `/imprint audit registry` runs Step 0 of `SKILL.md`, then Steps 3, 4 and 5 here — no component scan.

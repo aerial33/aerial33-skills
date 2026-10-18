@@ -15,8 +15,10 @@ file is listed.
    entries file, in Index order; removes the empty rows, the compliance column (a bare `yes` disappears,
    any other text moves into the class cell), `Token violations: none` lines and the parenthesis after
    `Last updated`; then **verifies** that nothing else was lost or added. A failed verify → stop, show it.
-3. **Hygiene report** — `modes/audit.md` Step 3 on the two new files; present the split report and the hygiene
-   report together. **Stop**: no note, Index line or Baseline is rewritten before the developer agrees.
+3. **Hygiene report** — commit the split (form only, proven by `verify`), then `modes/audit.md` Step 3
+   on the two new files; present the split report and the hygiene report together. **Stop**: no note, Index line or Baseline is rewritten before the developer agrees.
 4. **After agreement** — apply the hygiene fixes (family labels, Index order and length, notes, moves to
    the decisions log, Open Questions, `architecture.md`, `ui-rules.md` or a cross-cutting section), then
-   run `registry.sh check` again and give the final list of moves and the sizes before / after.
+   run `registry.sh keep` (the two files as committed at step 3 and the destination files as they
+   were, `--`, the same files now) and `registry.sh check`. A missing
+   sentence → put it back or show it; give the final list of moves and the sizes before / after.

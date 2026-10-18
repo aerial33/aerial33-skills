@@ -8,13 +8,16 @@
 #   registry.sh split  SINGLE MAIN ENTRIES [MAIN_TEMPLATE ENTRIES_TEMPLATE]
 #                                                 single-file registry -> two files, form only, then verify
 #   registry.sh verify SINGLE MAIN ENTRIES        nothing lost or added by split (besides allowed removals)
+#   registry.sh keep   BEFORE... -- AFTER...      every sentence and heading of the BEFORE files is still
+#                                                 in the AFTER files (moves allowed, losses reported).
+#                                                 Table rows are left to verify.
 #
 # Allowed removals in split: table rows whose class is empty (none / —), the "Token-compliant?" column
 # (a bare "yes" disappears, any other text moves into the class cell), "**Token violations:** none" lines,
 # the parenthesis after a "Last updated:" date, the old header and the "## Entrées/Entries" wrapper.
 # Perl is used for character counts: macOS awk counts bytes, not accented characters.
 
-[ "$#" -lt 3 ] && { sed -n '4,12p' "$0" >&2; exit 2; }
+[ "$#" -lt 3 ] && { sed -n '4,15p' "$0" >&2; exit 2; }
 command -v perl >/dev/null 2>&1 || { echo "!! perl not found" >&2; exit 2; }
 
 PERL_CODE=$(cat <<'PERLEOF'
@@ -41,6 +44,8 @@ my $ENTRIES_HEADER = <<'H';
 > **Ne jamais lire ce fichier en entier.** Une entrée : `grep -n '^### <Nom>' context/state/ui-registry-entries.md`,
 > puis environ 40 lignes à partir de la ligne trouvée (Read `offset`/`limit`, ou `sed -n 'N,+40p'`).
 > Index, Baseline et règles transverses : `ui-registry.md`. Aucune section transverse ici.
+> Lecture d'une entrée : propriété absente du tableau = aucune valeur ; classe sans marque = conforme aux
+> tokens ; « non évalué » = conformité non vérifiée ; pas de ligne « Token violations » = aucune.
 H
 
 sub slurp { my $f = shift; open(my $h, '<:encoding(UTF-8)', $f) or die "!! not found: $f\n";
@@ -67,8 +72,10 @@ sub transform { my ($l, $st, $log, $name) = @_;
     if ($st->{old} && @c == 3) {
       if (empty_cell($c[1])) { $log->{rows}++; return undef; }
       my $r = compliance_rest($c[2]);
-      if ($r ne '') { push @{$log->{moved}}, "$name — $c[0] : « $c[2] » → « $c[1] — $r »"; return "| $c[0] | $c[1] — $r |"; }
-      return "| $c[0] | $c[1] |"; }
+      if ($r eq '' && $c[2] =~ /^(—|–|-)$/ && $c[1] !~ /^none\b/i) { $r = 'non évalué'; push @{$log->{ne}}, "$name — $c[0] : « $c[1] »"; }
+      elsif ($r ne '') { push @{$log->{moved}}, "$name — $c[0] : « $c[2] » → « $c[1] — $r »"; }
+      return $r ne '' ? "| $c[0] | $c[1] — $r |" : "| $c[0] | $c[1] |";
+    }
     return $l; }
   $st->{old} = 0;
   if ($l =~ /^\*\*Token violations:\*\*\s*(none|aucune?)\.?\s*$/i) { $log->{tv}++; return undef; }
@@ -135,6 +142,7 @@ sub split_cmd { my ($single, $main, $entries, $mt, $et) = @_;
   print "entry without Index line (kept at the end): $_\n" for @noidx;
   printf "table rows removed (empty class): %d · \"Token violations: none\" lines removed: %d\n", $log{rows} // 0, $log{tv} // 0;
   print "compliance text kept in the class cell:\n", map("  $_\n", @{$log{moved} // []}) if $log{moved};
+  print "compliance « — » on a real class, marked « non évalué »:\n", map("  $_\n", @{$log{ne} // []}) if $log{ne};
   print "Last updated parenthesis removed (history):\n", map("  $_\n", @{$log{lu} // []}) if $log{lu};
   print "no family labels in the Index: add them at the hygiene step\n" unless @$fams;
   return verify($single, $main, $entries); }
@@ -164,7 +172,7 @@ sub check_cmd { my ($main, $entries, $dec) = @_; my @M = slurp($main); my @E = s
   my @eo = grep { $in{$_} } map { $_->{name} } @ent; my @io = grep { $has{$_} } @$names;
   for my $k (0 .. $#eo) { if ($eo[$k] ne $io[$k]) { $say->("entries not in Index order (first difference: $eo[$k], Index expects $io[$k])"); last } }
   my %sent; my $hist = qr/\b[A-Z]\d{2}(?:\.\d+)?\b|jalon|revue d[ue]|décision du|décidé le|\b20\d\d-\d\d-\d\d\b/i;
-  my $open = qr/à trancher|à revoir|à régler|provisoire|risque|open questions|tracker|TODO|TBD/i;
+  my $open = qr/à trancher|à revoir|à régler|provisoire|risque|TODO|TBD/i;
   my $logic = qr/\brequête|\bquery\b|\bwhere\b|overrideAccess|\baccess\b|\bfind\(|validation|validate|getPayload/i;
   for my $x (@ent) { my ($notes, $in_notes, @nl) = (0, 0);
     for my $p (@{$x->{lines}}) { my ($ln, $l) = @$p;
@@ -176,7 +184,8 @@ sub check_cmd { my ($main, $entries, $dec) = @_; my @M = slurp($main); my @E = s
       if ($l =~ /^\*\*Pattern notes:\*\*/) { $in_notes = 1 } elsif ($l =~ /^\*\*Token violations/ || $l =~ /^#{1,4} /) { $in_notes = 0 }
       if ($in_notes && $l =~ /\S/) { $notes++; push @nl, $l;
         for my $m ($l =~ /($hist)/g) { $say->("$x->{name} (line $ln): history « $m »" . ($m =~ /^[A-Z]\d{2}/ ? $dcount->($m) : '')) }
-        for my $m ($l =~ /($open)/g) { $say->("$x->{name} (line $ln): open point « $m »") }
+        my $ptr = (grep { $_->[1] =~ /Open Questions/ } @{$x->{lines}}) ? ' — pointer to Open Questions in the entry: check it is tracked' : '';
+        for my $m ($l =~ /($open)/g) { $say->("$x->{name} (line $ln): open point « $m »$ptr") }
         for my $m ($l =~ /($logic)/g) { $say->("$x->{name} (line $ln): logic or data? « $m » (check)") } } }
     $say->("$x->{name}: notes $notes lines > $NOTES_MAX") if $notes > $NOTES_MAX;
     my $txt = join(' ', @nl); $txt =~ s/^\*\*Pattern notes:\*\*\s*//;
@@ -184,6 +193,20 @@ sub check_cmd { my ($main, $entries, $dec) = @_; my @M = slurp($main); my @E = s
   for my $k (sort keys %sent) { my @w = sort keys %{$sent{$k}}; $say->("same sentence in " . join(', ', @w) . ": « " . substr($k, 0, 90) . "… »") if @w > 1 }
   printf "== %d entries, %d findings (judge: already settled in decisions? rule shared by 2+ entries?)\n", scalar(@ent), $n; return 0; }
 
+sub units { my @L = @_; my (@u, @para);
+  my $flush = sub { return unless @para; my $p = join(' ', @para); @para = ();
+    push @u, grep { length($_) >= 15 } map { my $s = $_; $s =~ s/[\s.;:,]+$//; $s } split /(?<=[.;:!?])\s+/, $p };
+  for my $l (@L) { if ($l =~ /^\s*$/ || $l =~ /^\s*\|/ || $l =~ /^\s*---\s*$/) { $flush->(); next }
+    if ($l =~ /^#{1,6}\s+(.*)$/) { $flush->(); push @u, $1; next } push @para, $l } $flush->(); return @u; }
+sub normt { my $s = lc shift; $s =~ s/\*\*Pattern notes:\*\*//gi; $s =~ s/\*\*//g; $s =~ s/(^|\s)(?:>|[-*]|\d+\.)\s+/$1/g; $s =~ s/\s+/ /g; return $s; }
+sub keep_cmd { my @a = @_; my ($i) = grep { $a[$_] eq '--' } 0 .. $#a; die "!! usage: keep BEFORE... -- AFTER...\n" unless defined $i && $i > 0 && $i < $#a;
+  my @before = @a[0 .. $i - 1]; my @after = @a[$i + 1 .. $#a];
+  my $hay = join(' ', map { normt(join(' ', slurp($_))) } @after); $hay =~ s/\s+/ /g; my (@miss, $n);
+  for my $f (@before) { for my $u (units(slurp($f))) { $n++; my $k = normt($u); push @miss, "$f: $u" if index($hay, $k) < 0 } }
+  print "== keep\n"; if (!@miss) { print "OK — $n sentences and headings, all still present.\n"; return 0 }
+  print "!! not found after (", scalar(@miss), " of $n):\n", map("  $_\n", @miss); return 1; }
+
+if ($cmd eq 'keep') { exit keep_cmd(@a) }
 if ($cmd eq 'check') { exit check_cmd(@a) } elsif ($cmd eq 'split') { exit split_cmd(@a) } elsif ($cmd eq 'verify') { exit verify(@a) }
 die "!! unknown command: $cmd\n";
 PERLEOF
