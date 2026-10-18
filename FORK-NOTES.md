@@ -10,6 +10,7 @@ originaux, hors périmètre de ces notes.
 | ------- | ---- | ---------- |
 | v0 | 2026-09 | Premier fork, spécifique Next.js + Payload + Tailwind, chemins et secrets écrits en dur (ancien kit agent-starter). |
 | v1 | 2026-10-01 | **Agnostique** : plus aucun chemin, dossier ni nom de secret en dur. Tout est lu dans `CLAUDE.md` et le manifeste de stack (`context/stack/stack.md`). Aligné sur le kit agent-starter en 4 couches (`context/state/`, `ui-tokens`/`ui-rules`, `build-plan`). |
+| v1.8.0 | 2026-10-18 | **Registre UI en deux fichiers** : `ui-registry.md` (en-tête, Index par familles, Baseline, règles transverses — lu en entier, moins de 10 Ko) et `ui-registry-entries.md` (une entrée par composant, lue à la demande par `grep` + environ 40 lignes). Règles d'écriture dans `/imprint` : Index de 160 caractères au plus, Baseline corrigée sur place, tableau sans lignes vides ni colonne de conformité, notes d'une dizaine de lignes sans historique, point ouvert, logique ni règle partagée. `/imprint audit` contrôle l'hygiène du registre (`scripts/registry.sh check`), `/imprint audit registry` seul ; `/imprint migrate` découpe un registre à un fichier, forme seulement, vérifiée par le script. Modes `audit` et `migrate` sortis dans `modes/` (chargés à la demande). Mesuré sur le boilerplate : registre lu à chaque tâche d'interface 83,3 Ko → 8,7 Ko. |
 | v1.7.1 | 2026-10-10 | **Modèle fixé dans l'en-tête** (`model:`, valable pour le tour qui lance le skill, la session reprend son modèle ensuite) : `/remember` et `/imprint` en Sonnet (restore testé : même résultat qu'en Opus), `/review` en Opus. Pas `/architect` : c'est un dialogue sur plusieurs tours, le modèle reviendrait à celui de la session dès la première réponse — passer par le mode plan (`opusplan`). |
 | v1.7.0 | 2026-10-10 | **Nettoyage** : `/remember` réécrit sans redites (restore 10,6 k → 6,4 k caractères chargés, save 9,9 k → 5,5 k) ; bandeaux de fork réduits à une ligne et prose de motivation condensée dans `/architect`, `/review`, `/imprint` (formats et règles inchangés). |
 | v1.6.3 | 2026-10-10 | **Lecture en un appel** : `remember/scripts/read-sections.sh` imprime fichiers et sections déclarés, sans numéros de ligne ; seuls le memory file et le plan actif (édités ensuite) passent par l'outil de lecture. **Handoff corrigé au restore** : en cas d'écart mémoire ↔ plan ↔ git, proposition de corriger ces lignes seulement. Mesuré en 1.6.2 : lire les mêmes fichiers sans skill = 42,2k tokens (l'outil de lecture charge les fichiers entiers : build-plan, architecture, registre) ; restore complet = 50,6k. |
@@ -50,10 +51,14 @@ originaux, hors périmètre de ces notes.
 | **Step 0 — résolution du layout** : chemins lus dans `CLAUDE.md` (registry, fichiers UI) et le manifeste (dossiers, exclusions, fichier de tokens) | Le skill ne casse plus quand le kit ou la stack changent. |
 | **Step 1 — lecture des tokens** avant capture | Passe d'un enregistreur passif à un **vérificateur de conformité**. |
 | **Exclusions** (code généré, primitives de bibliothèque) lues dans le manifeste | Ne pas imprinter ce qui n'est pas du code du projet. |
-| Colonne **Token-compliant?** + section **Token violations** | Conformité visible et actionnable. |
+| Conformité marquée **dans la cellule** (`exception (…)`, `⚠️ …`, ratio de contraste) ; ligne **Token violations** seulement s'il y en a une | Conformité visible et actionnable. La colonne « Token-compliant? » valait `yes` ou `—` dans 96 % des lignes (boilerplate). |
 | Audit comparé aux tokens | La baseline s'appuie sur la source de vérité, pas seulement sur la majorité. |
 | Si une info manque → **demande**, ne crée jamais le registry ailleurs | Évite les registres en double. |
-| **Index** en tête du registre (une ligne par composant), tenu à chaque écriture ; `/imprint` lit le registre entier, les autres sessions Index + Baseline | Le registre est relu à chaque tâche d'interface et grossit à chaque composant (19,6 k caractères sur le boilerplate après F08). |
+| **Index** en tête du registre (une ligne par composant, 160 caractères au plus, par familles), tenu à chaque écriture | Le registre est relu à chaque tâche d'interface et grossit à chaque composant (19,6 k caractères sur le boilerplate après F08). |
+| Registre en **deux fichiers** : principal lu en entier, entrées lues une à une (`grep` + `offset`/`limit`) ; `/imprint` lui-même n'ouvre que l'entrée qu'il écrit | Rien ne disait comment lire « l'Index et la Baseline seulement » : un agent lisait les 83 Ko (32 k tokens) ou une page tronquée. |
+| **Règles d'écriture** : tableau sans lignes vides, notes d'une dizaine de lignes ; historique → journal des décisions, points ouverts → tracker, logique → `architecture.md`, règle partagée → section transverse ou `ui-rules.md` ; Baseline corrigée sur place ; entrée retirée quand le composant est supprimé | Les notes recopiaient le journal et les questions ouvertes (28 entrées sur 35) ; 124 lignes de tableau sur 306 étaient vides. |
+| **Hygiène** dans `/imprint audit` et `/imprint audit registry`, par `scripts/registry.sh check` (sh + perl) | Contrôles mécaniques sans tokens ; perl car l'awk de macOS compte les octets, pas les caractères accentués. |
+| **`/imprint migrate`** : `registry.sh split` + `verify`, puis rapport d'hygiène avant toute réécriture | Le fond ne change pas, et c'est vérifié ligne à ligne. |
 
 ## /remember — différences avec l'original
 
@@ -75,5 +80,5 @@ originaux, hors périmètre de ces notes.
 
 - Plus de mise à jour automatique depuis JSM : réinstaller `JavaScript-Mastery-Pro/skills` écraserait ces quatre skills.
 - Les skills dépendent du **contrat** du kit agent-starter : `CLAUDE.md` avec §1 (lecture) et §4
-  (frontières d'état, dont le dossier de plans), et un manifeste de stack avec les sections Dossiers, Secrets, Commande de
+  (frontières d'état, dont le dossier de plans et les deux fichiers du registre UI), et un manifeste de stack avec les sections Dossiers, Secrets, Commande de
   vérification. Si ce contrat change, mettre à jour les skills.

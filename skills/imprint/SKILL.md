@@ -1,6 +1,6 @@
 ---
 name: imprint
-description: After building any UI component, extract the visual patterns that matter for consistency, check them against the project's design tokens, and record them in the UI registry — so every component built next matches what came before and uses the design system instead of bypassing it. Paths, component folders and token source are read from the project's CLAUDE.md and stack manifest, never hardcoded.
+description: After building any UI component, extract the visual patterns that matter for consistency, check them against the project's design tokens, and record them in the UI registry — a short main file read in full (Index, Baseline, cross-cutting rules) and an entries file read one entry at a time — so every component built next matches what came before. Also audits the registry's own hygiene and migrates a single-file registry. Paths, component folders and token source are read from the project's CLAUDE.md and stack manifest, never hardcoded.
 model: sonnet
 ---
 
@@ -8,16 +8,18 @@ model: sonnet
 
 Components built in isolation drift (spacing, colors, radius, raw values bypassing the design system).
 This skill reads what was just built, checks it against the tokens, and records the patterns that matter
-so every next component matches.
+so every next component matches — in a registry that stays cheap to read.
 
 ---
 
 ## How to Invoke
 
 ```
-/imprint              # capture from the most recently built/modified component(s)
-/imprint [filepath]   # capture from a specific file
-/imprint audit        # scan the whole UI, find conflicts, establish a baseline
+/imprint                 # capture from the most recently built/modified component(s)
+/imprint [filepath]      # capture from a specific file
+/imprint audit           # scan the whole UI and the registry, find conflicts, establish the baseline
+/imprint audit registry  # registry hygiene only (no component scan) — cheap, run it often
+/imprint migrate         # single-file registry → main file + entries file (form only)
 ```
 
 Run `/imprint audit` first on any project whose UI was not tracked from the beginning.
@@ -31,8 +33,10 @@ Never assume paths. Resolve them, in this order:
 1. **`CLAUDE.md`** (project root)
    - its reading list (§1) → the files to read for **UI / interface** work
      (in agent-starter: `context/ui-tokens.md`, `context/ui-rules.md`, `context/state/ui-registry.md`,
-     `context/designs/`) — `/imprint` itself reads the **whole** registry, since it writes it;
-   - its **state boundaries** table (§4) → the exact path of the **UI registry**.
+     `context/designs/`);
+   - its **state boundaries** table (§4) → the exact paths of the **UI registry** (main file) and of the
+     **UI registry entries** file. Only one registry path declared → older single-file layout: outside
+     `migrate`, say so, propose `/imprint migrate` and write nothing.
 2. **Stack manifest** — `context/stack/stack.md` (or the manifest `CLAUDE.md` points to):
    - **component folders to imprint**;
    - **folders to exclude** (generated code, component-library primitives);
@@ -41,10 +45,20 @@ Never assume paths. Resolve them, in this order:
    - the component library in use, if any.
 3. **Fallback** — if `CLAUDE.md` or the manifest is missing, or a value is not declared: say which one
    is missing and **ask the developer**. Do not guess a folder, and never create the registry anywhere
-   other than the declared path.
+   other than the declared paths.
 
 State the resolved values in one line before continuing, e.g.
-`Registry: context/state/ui-registry.md · Components: src/components/**, src/blocks/** · Tokens: src/app/(frontend)/globals.css`.
+`Registry: context/state/ui-registry.md + ui-registry-entries.md · Components: src/components/**, src/blocks/** · Tokens: src/app/(frontend)/globals.css`.
+
+**How to read the registry**
+
+- **Main file**: always in full — it is kept small for that.
+- **Entries file**: never in full. For each component you update, reuse or imitate:
+  `grep -n '^### <Name>' <entries file>`, then read about 40 lines from the line found (Read with
+  `offset`/`limit`, or `sed -n 'N,+40p'`). Unsure of the name → find it in the Index first.
+- `audit` and `migrate` go through this skill's script, and open only the entries its report points to:
+  `sh <skill folder>/scripts/registry.sh check <main> <entries> <decisions log>` (run from the project
+  root), `… split <single> <main> <entries>`, `… verify <single> <main> <entries>`.
 
 ---
 
@@ -95,7 +109,7 @@ enforced pattern), responsive variants (capture the base only).
 
 For each extracted value, check conformance:
 
-- color backed by a token? ✅ — palette class within a declared exception? ✅ (note "exception") —
+- color backed by a token? ✅ — palette class within a declared exception? ✅ (mark `exception (…)`) —
   palette class outside the exceptions? ⚠️ warning — raw hex / arbitrary value? ⚠️ violation;
 - radius on the defined scale? ✅ — off-scale value? ⚠️ flag it;
 - spacing matches the convention? ✅ — outlier? ⚠️ note it.
@@ -104,29 +118,42 @@ For each extracted value, check conformance:
 
 ## Step 4 — Write to the UI registry
 
-Open the registry at the path resolved in Step 0. Create it there if missing. Append a new entry, or
-update the existing entry if this component type is already registered. Never duplicate.
+Open the entry to update (Step 0, *How to read*); create the files from the kit templates if missing.
+Add a new entry, or update the existing one **in place**. Never duplicate. Every write updates the
+Index in the same edit.
 
-### The index (always up to date)
+### Layout — two files
 
-The registry starts with an `## Index` section, right after its header: **one line per registered
-component**, then one line per cross-cutting rule section. Sessions read the *Index* and the
-*Baseline* only; they open a full entry (`### <Name>`) when they reuse, modify or build something
-similar to that component. So the index line must say enough to know **when** to open the entry.
+| Main file (read in full, keep under 10 KB) | Entries file (read one entry at a time) |
+| ------------------------------------------ | --------------------------------------- |
+| header (reading rule), then **Index**, then **Baseline**, then the **cross-cutting sections**, in this order | header (reading rule), then `## <Family>` headings in Index order, each with its `### <Name>` entries |
+
+- A cross-cutting section lives **only** in the main file, after the Baseline — never between entries
+  (the entries after it would read as its sub-sections).
+- The header of each file says how to read both (kit templates: `context/method/state/` or the kit's
+  `method/state/`). Keep it.
+
+### The Index
 
 ```markdown
 ## Index
 
-> One line per component. Read this Index and the Baseline for any UI work; open the full entry
-> (`### <Name>`) before reusing, modifying or building something similar. Kept up to date by `/imprint`.
-
-- **[Name]** — `[file or folder]` — [type, short] — [the rule that matters most, one line]
-- Cross-cutting: § [section title] — [what it governs, one line]
+**[Family]**
+- **[Name]** — `[file or folder]` — [type, short] — [the rule that matters + when to open the entry]
+- Transverse : § [section title] — [what it governs]
 ```
 
-Every write updates the index in the same edit: new entry → new line; updated entry → its line
-rewritten if the essential rule changed; new cross-cutting section → new line. If the registry has
-entries but no index (older layout), build the index from the existing entries first and say so.
+- One line per component, **160 characters at most**. It gives the rule that matters and enough to
+  know *when* to open the entry — not a summary of the entry.
+- Lines grouped under family labels (the project's own: e.g. admin, gateways, heros, blocks,
+  navigation and frame, content…), in the **same order** as the entries file.
+- Cross-cutting section lines come last.
+
+### The Baseline
+
+`## Baseline` then `Last updated: [date] (/imprint audit)`, the standard table, and **Deviations**: one
+line per component, with a one-line pointer where the point is tracked. Corrected **in place** when a
+source or a rule changes — never a correcting section added further down.
 
 ### Entry format
 
@@ -137,28 +164,38 @@ File: [filepath]
 Type: [component | content block | wraps <library>:<primitive> | external:<source>]
 Last updated: [date]
 
-| Property         | Class           | Token-compliant? |
-| ---------------- | --------------- | ---------------- |
-| Background       | [class]         | yes / exception / ⚠️ no |
-| Border           | [class]         | yes / ⚠️ no       |
-| Border radius    | [class]         | yes / ⚠️ no       |
-| Text — primary   | [class]         | yes / ⚠️ no       |
-| Text — secondary | [class]         | yes / ⚠️ no       |
-| Spacing          | [class]         | yes / ⚠️ no       |
-| Hover state      | [class]         | yes / ⚠️ no       |
-| Shadow           | [class or none] | —                |
-| Accent usage     | [class or none] | yes / ⚠️ no       |
+| Property | Class |
+| -------- | ----- |
+| [only the properties that have a value] | [class] — [only if needed: `exception (…)`, `⚠️ …`, a contrast ratio] |
 
-**Pattern notes:** [why a class was chosen, what this component should always match, allowed variations]
-**Token violations:** [list any non-token values found, or "none"]
+**Pattern notes:** [what it takes to build or review the component]
+**Token violations:** [only if there is one]
 ```
+
+- Table properties come from: Background, Border, Border radius, Text — primary, Text — secondary,
+  Spacing, Hover state, Shadow, Accent usage. **No row** for an empty property (no `none`, no `—`); no
+  compliance column — a compliant class carries no mark.
+- `Last updated` is the only date in the entry, with nothing after it.
+- **Pattern notes**: rendering, variants, accessibility, usage — **about ten lines at most**. Never in
+  the notes (write it where it belongs, leave at most a one-line pointer):
+  - history — feature or step references, "milestone review…", "decided on…" → decisions log;
+  - open points — "to decide", "risk", "provisional, to revisit" → Open Questions of the progress tracker;
+  - logic or data — queries, validation, access filtering → `context/architecture.md`;
+  - a rule that holds beyond the component (cited by two entries or more) → a cross-cutting section of
+    the main file when it governs a family of components, `context/ui-rules.md` when it is a general
+    visual rule; the entries keep a pointer.
+
+### Removed component
+
+Its entry and Index line are removed once any rule it carried has moved (cross-cutting section,
+`ui-rules.md`), with one line in the decisions log. This is the only removal.
 
 ---
 
 ## Step 5 — Confirm and flag
 
 ```
-Imprinted [Component Name] → [registry path]
+Imprinted [Component Name] → [entries file] (+ Index)
 Captured: bg [class] · border [class] · radius [class] · text [classes] · spacing [classes] · hover [class]
 ```
 
@@ -170,56 +207,19 @@ If any value bypassed the design system, surface it — never record it silently
 Fix these to keep the design system intact.
 ```
 
+If the main file is now over 10 KB, say so and propose `/imprint audit registry`.
+
 ---
 
-## Audit Mode — /imprint audit
+## Audit and migration
 
-### Step 1 — Scan
-
-Resolve the layout (Step 0) and load the tokens (Step 1). Read every file in the declared component
-folders, applying the exclusions.
-
-### Step 2 — Identify conflicts against the tokens
-
-```
-## UI Consistency Audit
-
-### Conflicts found
-**Border radius** — [variants found] → standardise on [token-scale value]
-**Background colors** — [classes found; flag any raw hex] → [token classes]
-**Text colors** — [classes found; flag any bypassing tokens] → [token classes]
-**Spacing** — [variations] → [standard]
-**Border colors** — [classes found] → [token class]
-**Interactive states** — [variants] → [standard]
-
-### Token violations (must fix)
-[Every raw hex / arbitrary value, with file and line]
-
-### Palette warnings (decide)
-[Every palette class outside the declared exceptions, with file and line → role, new token, or new exception]
-
-### Recommended baseline
-[The correct pattern per property — based on the tokens and what the majority already uses correctly]
-```
-
-### Step 3 — Wait for confirmation
-
-Do not fix anything, do not write the registry yet.
-
-```
-Audit complete. [X] conflicts, [Z] token violations across [Y] properties.
-Confirm the baseline and I will write it to the UI registry.
-```
-
-### Step 4 — Write the confirmed baseline
-
-Write it to the registry, labelled `## Baseline — Established [date] via /imprint audit`, then list the
-components that deviate: file → what's wrong → what it should be.
-Create or refresh the `## Index` (Step 4) at the same time.
+`/imprint audit`, `/imprint audit registry` → read **only** `modes/audit.md` in this skill's folder.
+`/imprint migrate` → read **only** `modes/migrate.md`. The normal mode needs neither.
 
 ---
 
 ## The Rule
 
 Build a component. Run `/imprint`. Move on. Every time.
-A registry that matches the tokens is a design system that enforces itself.
+A registry that matches the tokens is a design system that enforces itself; a registry that stays
+short is one that actually gets read.

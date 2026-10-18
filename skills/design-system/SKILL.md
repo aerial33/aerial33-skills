@@ -38,7 +38,8 @@ Ne jamais supposer un chemin. Résoudre, dans cet ordre :
 1. **`CLAUDE.md`** (racine du projet)
    - §1 lecture, lignes *Interface* et *Fondations visuelles* → `ui-tokens`, `ui-rules`, le dossier
      des designs (`brief.md`, `inspiration/`, `mockups/`) ;
-   - §4 frontières d'état → chemins du **progress tracker** et du **UI registry**.
+   - §4 frontières d'état → chemins du **progress tracker** et du **UI registry** (fichier principal
+     et fichier des entrées).
 2. **Manifeste de stack** (`context/stack/stack.md` ou celui que `CLAUDE.md` désigne)
    - § Dossiers → **fichier de tokens** (source unique des valeurs), **page témoin**, dossiers de composants ;
    - § Design → format des tokens, chargement des polices, pack d'icônes, primitives, règles des
@@ -245,11 +246,13 @@ Prochaine feature d'interface : [F0x du build-plan].
 
 Un changement de token ou de règle après le gel :
 
-1. lire le UI registry → lister les composants touchés ;
+1. lire le fichier principal du UI registry (l'Index donne le fichier et la règle de chaque composant)
+   → lister les composants touchés ; n'ouvrir l'entrée d'un composant (`grep -n '^### <Nom>'` puis
+   environ 40 lignes) que si l'Index ne suffit pas à juger l'impact ;
 2. présenter `changement → composants impactés`, attendre l'accord ;
 3. modifier le fichier de tokens ; `ui-tokens.md` / `ui-rules.md` si un rôle ou une règle change ;
    une ligne dans l'historique du brief ;
-4. relancer `/imprint audit`.
+4. relancer `/imprint audit` (la Baseline est corrigée sur place).
 
 ---
 

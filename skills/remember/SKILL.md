@@ -21,7 +21,8 @@ Never assume a path.
 1. **`CLAUDE.md`** — do not re-read it if it is already in context (Claude Code loads it at start).
    - §1 **reading list**: *always*, *resume* and *per task* rows;
    - §4 **state boundaries**: paths of the **progress tracker**, **decisions log**, **memory file**,
-     **UI registry** and **plans folder** (agent-starter: `context/state/…`, `context/plans/`).
+     **UI registry** (main file; its entries file is not read here) and **plans folder** (agent-starter:
+     `context/state/…`, `context/plans/`).
 2. **Stack manifest** (`context/stack/stack.md` or the one `CLAUDE.md` names): **secret names** and the
    **verification (gate) command**.
 3. **Build plan** — the features and their IDs (agent-starter: `context/build-plan.md`).
@@ -33,6 +34,6 @@ Never assume a path.
 - **Never persist or surface a secret** (manifest's secret names, any credential, token, password, key).
 - **Status** → progress tracker (short, read every session). **Decisions** → decisions log, and the rule
   file they constrain. **Handoff** → memory file (overwritten each save). **Plan** → owned by
-  `/architect`: pointed to, never copied. **UI registry** → owned by `/imprint`.
+  `/architect`: pointed to, never copied. **UI registry** (both files) → owned by `/imprint`.
 
 Every session ends with `/remember save` and starts with `/remember restore`.

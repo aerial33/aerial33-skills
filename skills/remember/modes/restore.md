@@ -40,8 +40,9 @@ tracker's next unchecked ID.
      exists, and one search of the decisions log for the ID and the entry's terms
      (`grep -n -E 'F09|hero' <log>`). Overview, glossary and full log are `/architect`'s to load.
 3. **Per task**, for the kind of next action in the memory file (UI, data model, code…), with the
-   sections the reading list names (e.g. `"<UI registry>#Index|Baseline"`). In *Nouvelle feature*, only
-   if the next action is direct work, not planning.
+   files and sections the reading list names (e.g. the UI registry main file, whole: `"<UI registry>"`).
+   Never the UI registry **entries** file: an entry is read when the work reaches that component. In
+   *Nouvelle feature*, only if the next action is direct work, not planning.
 
 No reading list in `CLAUDE.md` → say so, read the markdown under `context/` except state files and
 designs, recommend adding one. `CLAUDE.md` stays the source of truth over other agents' rule files.

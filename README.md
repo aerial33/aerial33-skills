@@ -14,7 +14,7 @@ Les skills ne connaissent **ni la stack ni l'emplacement des fichiers**. Ils lis
 | Source | Ce que les skills y prennent |
 | ------ | ---------------------------- |
 | `CLAUDE.md` du projet — §1 lecture | quels fichiers lire (toujours / selon la tâche) |
-| `CLAUDE.md` du projet — §4 frontières d'état | chemins du progress tracker, du fichier memory, du UI registry, du dossier de plans |
+| `CLAUDE.md` du projet — §4 frontières d'état | chemins du progress tracker, du fichier memory, du UI registry (fichier principal et entrées), du dossier de plans |
 | `context/stack/stack.md` (manifeste de stack) | dossiers de composants, exclusions, fichier de tokens, noms des secrets, commande de vérification |
 | `context/build-plan.md` | IDs des features (F01, F02…) |
 
@@ -29,7 +29,7 @@ pas les skills. Si une information manque, le skill le dit et demande — il n'i
 | `/review` | Après chaque feature (`/review jalon` à chaque jalon) | **Forké** — compare au plan persisté ou à l'entrée du build-plan, termine par le tag git à poser |
 | `/recover` | Quand quelque chose casse | Original JSM |
 | `/design-system` | Avant la première page (F00, provisoire ou complète), puis pour faire évoluer le système | **Original aerial33** — thème par défaut + layout, ou brief, tokens, page témoin, gel ; lit le manifeste |
-| `/imprint` | Après un composant UI | **Forké** — contrôle aux tokens, lit le manifeste |
+| `/imprint` | Après un composant UI (`audit registry` régulièrement) | **Forké** — contrôle aux tokens, lit le manifeste, registre en deux fichiers (principal lu en entier, entrées lues une à une), hygiène et migration par script |
 | `/remember` | Fin & début de session | **Forké** — statut / décisions / handoff séparés, restore par mode et par sections, renvoie au plan actif, lit CLAUDE.md et le manifeste |
 
 ### Skills de stack
