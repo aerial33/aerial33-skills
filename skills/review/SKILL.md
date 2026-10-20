@@ -79,6 +79,7 @@ Check:
 - **Design system** — are the correct tokens, classes, and patterns used? Any hardcoded values that should be variables? Any raw color classes that should use the design system?
 - **Code standards** — naming conventions, file organisation, TypeScript strictness, error handling patterns — do they match what the project established?
 - **Existing patterns** — does this feature introduce a new pattern when an existing one should have been used?
+- **Duplication and dependencies** — does the diff copy logic that already exists in the repo (a utility, a component, a query) instead of reusing or extending it? Does it add a dependency (`package.json` or equivalent)? If so: is it justified in the plan or the decisions log, and is its role not already covered by an installed package or by the stack itself (the stack's code standards list what it provides)?
 
 ### Layer 3 — Is it production ready?
 

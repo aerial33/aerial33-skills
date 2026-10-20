@@ -43,6 +43,7 @@ Before saying anything, take stock of what already exists:
     **Écarts au plan**, or a new plan? A new plan is named `<ID>-<slug>-v2.md` and the old one gets the
     status **remplacé** with a link to the new one;
   - **terminé** → ask whether this is really new work (and whether it needs a new build-plan entry).
+- Search the repo for what the feature can reuse — utilities, components, queries, installed packages — by role, not only by name. A step never rebuilds what exists; a new dependency is a decision for Step 3, never an implementation detail
 - Build a clear picture of what needs to be built and what already exists
 
 Do not ask about anything already clearly answered by existing documentation. A good senior engineer does their homework before the meeting.
@@ -150,6 +151,7 @@ be tested end to end, written with its own verification.
 ## Décisions
 
 - **[Decision]** : [what was decided and why]
+- **Nouvelle dépendance `[package]`** (only if the plan adds one) : [its role, and why nothing installed or provided by the stack covers it]
 
 ## Hypothèses
 
