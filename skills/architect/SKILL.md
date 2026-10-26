@@ -35,7 +35,7 @@ Before saying anything, take stock of what already exists:
 - A file already loaded in full in this session (e.g. by `/remember restore`) and not modified since
   is not read again. A section or an extract does not count: read the full file
 - Read the **decisions log** in full (or, in an older layout, the decisions section of the progress
-  tracker): the plan must not silently contradict a past decision. A decision this plan revisits is
+  tracker) — never the **frictions log**, which holds no decisions: the plan must not silently contradict a past decision. A decision this plan revisits is
   surfaced in Step 3, never overridden quietly
 - Look in the plans folder for a plan with the same feature ID:
   - **brouillon** (draft) → resume it instead of starting over;
