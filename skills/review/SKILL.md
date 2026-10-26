@@ -79,6 +79,8 @@ Check:
 - **Design system** — are the correct tokens, classes, and patterns used? Any hardcoded values that should be variables? Any raw color classes that should use the design system?
 - **Code standards** — naming conventions, file organisation, TypeScript strictness, error handling patterns — do they match what the project established?
 - **Existing patterns** — does this feature introduce a new pattern when an existing one should have been used?
+- **Callers outside the diff** — when the diff changes the behavior or the return value of shared code (a function, a field, a block, a utility), search its uses outside the diff and check they still hold. A fix applied in one caller while the cause sits in the shared code is an issue.
+- **Missing tests** — risky logic added or changed (access control, conditional hook, validation, branching utility, data write, bug fix) without a test that fails when it breaks. One test that would catch the break, not coverage; a test that would also pass without the code it tests does not count. The stack's code standards say which logic needs a test and where it goes.
 - **Duplication and dependencies** — does the diff copy logic that already exists in the repo (a utility, a component, a query) instead of reusing or extending it? Does it add a dependency (`package.json` or equivalent)? If so: is it justified in the plan or the decisions log, and is its role not already covered by an installed package or by the stack itself (the stack's code standards list what it provides)?
 
 ### Layer 3 — Is it production ready?
@@ -94,7 +96,7 @@ Check:
 
 ## Step 3 — Report What You Found
 
-After completing all three layers, produce a clear report. Do not bury issues. Do not soften them. Report honestly so the developer can make informed decisions.
+After completing all three layers, produce a clear report. Do not bury issues. Do not soften them. Report honestly so the developer can make informed decisions. Never leave out **Not verified**: a check you could not run is not a check that passed.
 
 ```
 ## Review — [Feature Name]
@@ -111,6 +113,9 @@ Benchmark: [plan path · status · part reviewed, if milestone review] or [build
 ### Layer 3 — Production readiness
 [PASS / ISSUES FOUND]
 [List any error handling gaps, edge cases, or obvious bugs]
+
+### Not verified
+[What this review could not check, and why: no browser render, a state, role or event not exercised, a gate step that did not run — or "Nothing."]
 
 ### Summary
 [X] issues found across [Y] layers.
